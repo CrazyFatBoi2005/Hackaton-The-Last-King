@@ -12,7 +12,7 @@ Downloaded folder:
 
 `C:\Programming\hackaton\public\audio`
 
-Current total size: about 0.55 MB.
+Current total size: about 0.57 MB.
 
 ## Event Map
 
@@ -20,16 +20,16 @@ Current total size: about 0.55 MB.
 | --- | --- | ---: | --- |
 | Background music loop | `public/audio/music_arcade_invincibility_loop.ogg` | 0.22 | Upbeat 8-bit loop. Start on `Start Run` after user gesture. |
 | UI click/select | `public/audio/ui_click_select.ogg` | 0.40 | Buttons, card select, retry select. Crisp casino chip tap. |
-| King move | `public/audio/king_move_chip_tick.ogg` | 0.24 | One-cell movement. Treat each move like a slot-machine tick. |
-| King hit | `public/audio/king_hit_chip_clack.ogg` | 0.62 | Player damage. Keep sharp and louder than enemy hits. |
+| King move | `public/audio/king_move_chip_tick.ogg` | 0.22 | One-cell movement. New short procedural arcade tick for frequent replay. |
+| King hit | `public/audio/king_hit_chip_clack.ogg` | 0.66 | Player damage. New falling arcade hit with a sharper negative read. |
 | Enemy hit | `public/audio/enemy_hit_chip_clack.ogg` | 0.34 | Weapon impact on enemy. Cap simultaneous voices. |
-| Enemy death | `public/audio/enemy_death_chip_payout.ogg` | 0.42 | Small chip payout when a corrupted piece dies. |
+| Enemy death | `public/audio/enemy_death_chip_payout.ogg` | 0.46 | New short payout burst when a corrupted piece dies. |
 | XP pickup | `public/audio/xp_pickup_coin_blip.wav` | 0.32 | Main dopamine sound. Add pitch variance for pickup streams. |
 | Extra pickup / bonus | `public/audio/bonus_coin_blip.wav` | 0.28 | Optional alternate for larger XP gems or chained pickups. |
 | Level-up | `public/audio/level_up_jackpot.ogg` | 0.76 | Local CC0-derived mini jackpot from coin blips. |
 | Weapon proc / attack whoosh | `public/audio/attack_card_whoosh.ogg` | 0.30 | Auto weapon fire, especially bishop/rook/queen pattern reveals. |
-| Boss warning | `public/audio/boss_warning_slot_rattle.ogg` | 0.72 | Reel-rattle warning before boss or corruption surge. |
-| Game over | `public/audio/game_over_bust.ogg` | 0.70 | "Bust" style dice/chip fall. Stop or fade music first. |
+| Boss warning | `public/audio/boss_warning_slot_rattle.ogg` | 0.74 | New escalating slot-warning tick before boss or corruption surge. |
+| Game over | `public/audio/game_over_bust.ogg` | 0.72 | New descending arcade bust stinger. Stop or fade music first. |
 | Victory | `public/audio/victory_jackpot.ogg` | 0.78 | Jackpot payout stinger. Stop or fade music first. |
 
 ## Loop Strategy
@@ -55,12 +55,12 @@ If the loop feels too intense for longer runs, expose only one tuning value firs
   - XP pickup: 0.88-1.18
   - King move: 0.96-1.05
   - Enemy hit: 0.92-1.08
-  - Enemy death: 0.95-1.10
+  - Enemy death: 0.95-1.08
 - Voice caps:
   - `xp_pickup_coin_blip`: max 6 active, or batch pickups every 50-80 ms.
   - `enemy_hit_chip_clack`: max 4 active.
   - `attack_card_whoosh`: max 3 active.
-  - `king_move_chip_tick`: max 2 active.
+  - `king_move_chip_tick`: max 1 active, retrigger allowed.
 - Critical feedback priority:
   1. king hit
   2. level-up jackpot
