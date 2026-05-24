@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import { getScreenPosition, isCoordInViewport } from '../game/world'
-import type { RenderFrame } from '../game/types'
+import type { RenderEffect, RenderFrame } from '../game/types'
 
 const ASSET_ROOT = '/assets/chess-survivors'
 
@@ -53,7 +53,7 @@ export function GameBoard({ frame }: GameBoardProps) {
               <div
                 className={`board-effect board-effect--${effect.kind}`}
                 key={effect.id}
-                style={gridPosition(effect.coord, frame)}
+                style={effectPosition(effect, frame)}
               >
                 {effect.kind === 'damage-number' ? effect.value : null}
               </div>
@@ -85,7 +85,16 @@ export function GameBoard({ frame }: GameBoardProps) {
 }
 
 function gridPosition(coord: { x: number; y: number }, frame: RenderFrame): CSSProperties {
-  return worldPosition(coord, frame)
+  return worldCenterPosition(coord, frame)
+}
+
+function effectPosition(effect: RenderEffect, frame: RenderFrame): CSSProperties {
+  return {
+    ...worldCenterPosition(effect.coord, frame),
+    width: effect.widthUnits ? `calc(${effect.widthUnits} * var(--cell-size))` : undefined,
+    height: effect.heightUnits ? `calc(${effect.heightUnits} * var(--cell-size))` : undefined,
+    '--effect-rotation': effect.rotationDeg ? `${effect.rotationDeg}deg` : undefined,
+  } as CSSProperties
 }
 
 function worldPosition(coord: { x: number; y: number }, frame: RenderFrame): CSSProperties {
@@ -94,5 +103,14 @@ function worldPosition(coord: { x: number; y: number }, frame: RenderFrame): CSS
   return {
     left: `calc(var(--board-pad) + ${position.x.toFixed(3)} * var(--cell-size))`,
     top: `calc(var(--board-pad) + ${position.y.toFixed(3)} * var(--cell-size))`,
+  }
+}
+
+function worldCenterPosition(coord: { x: number; y: number }, frame: RenderFrame): CSSProperties {
+  const position = getScreenPosition(coord, frame.viewport)
+
+  return {
+    left: `calc(var(--board-pad) + ${(position.x + 0.5).toFixed(3)} * var(--cell-size))`,
+    top: `calc(var(--board-pad) + ${(position.y + 0.5).toFixed(3)} * var(--cell-size))`,
   }
 }

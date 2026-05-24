@@ -1,18 +1,17 @@
 import { GAME_CONFIG } from './config'
 import {
   chebyshevDistance,
-  coordKey,
   directionFromVector,
   distanceBetween,
+  getForwardArea,
   getInputVector,
-  getPawnStrikeCells,
   getSpawnCoord,
   getViewport,
   getVisibleCells,
+  isCoordInForwardArea,
   isCoordInViewport,
   moveToward,
   normalizeVector,
-  snapToCell,
 } from './world'
 import type {
   EnemyState,
@@ -140,6 +139,9 @@ export function getRenderFrame(state: GameState): RenderFrame {
         coord: effect.coord,
         cells: effect.cells,
         value: effect.value,
+        widthUnits: effect.widthUnits,
+        heightUnits: effect.heightUnits,
+        rotationDeg: effect.rotationDeg,
       })),
     hud: {
       hp: state.player.hp,
@@ -225,13 +227,19 @@ function fireWeapon(state: GameState): GameState {
     return state
   }
 
-  const attackOrigin = snapToCell(state.player.coord)
-  const attackCells = getPawnStrikeCells(attackOrigin, state.player.facing, state.weapon.range)
-  const hitKeys = new Set(attackCells.map(coordKey))
+  const attackArea = getForwardArea(
+    state.player.coord,
+    state.player.facing,
+    state.weapon.range,
+    GAME_CONFIG.pawnStrikeWidthUnits,
+    GAME_CONFIG.pawnStrikeStartOffset,
+  )
   const effects: VisualEffectState[] = [
     ...state.effects,
-    createEffect(state, 'pawn-strike', attackOrigin, GAME_CONFIG.attackEffectMs, {
-      cells: attackCells,
+    createEffect(state, 'pawn-strike', attackArea.center, GAME_CONFIG.attackEffectMs, {
+      widthUnits: attackArea.length,
+      heightUnits: attackArea.width,
+      rotationDeg: attackArea.rotationDeg,
     }),
   ]
   const xpDrops: XpDropState[] = [...state.xpDrops]
@@ -242,7 +250,16 @@ function fireWeapon(state: GameState): GameState {
   const enemies: EnemyState[] = []
 
   for (const enemy of state.enemies) {
-    if (!hitKeys.has(coordKey(snapToCell(enemy.coord)))) {
+    if (
+      !isCoordInForwardArea(
+        enemy.coord,
+        state.player.coord,
+        state.player.facing,
+        state.weapon.range,
+        GAME_CONFIG.pawnStrikeWidthUnits,
+        GAME_CONFIG.pawnStrikeStartOffset,
+      )
+    ) {
       enemies.push(enemy)
       continue
     }
@@ -375,7 +392,9 @@ function createEffect(
   kind: VisualEffectState['kind'],
   coord: GridCoord,
   ttlMs: number,
-  extras: Pick<VisualEffectState, 'cells'> = {},
+  extras: Partial<
+    Pick<VisualEffectState, 'cells' | 'widthUnits' | 'heightUnits' | 'rotationDeg'>
+  > = {},
 ): VisualEffectState {
   return {
     id: `effect-${state.effectCounter + 1}`,

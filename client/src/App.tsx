@@ -16,7 +16,7 @@ function App() {
             <p className="label">Chess Survivors</p>
             <h1>Chess Survivors</h1>
           </div>
-          <p>WASD / arrows move freely. Chess patterns still fire on the board grid.</p>
+          <p>WASD / arrows move freely. Chess directions shape the autoattacks.</p>
         </header>
 
         <div className="play-surface">

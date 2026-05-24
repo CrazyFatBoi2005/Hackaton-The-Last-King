@@ -20,7 +20,6 @@ export function useGameLoop() {
   const inputRef = useRef<InputState>({ ...EMPTY_INPUT })
   const releaseTimersRef = useRef<Partial<Record<keyof InputState, number>>>({})
   const lastFrameAtRef = useRef<number | null>(null)
-  const accumulatorRef = useRef(0)
 
   const setSyncedState = useCallback((nextState: GameState) => {
     stateRef.current = nextState
@@ -30,7 +29,6 @@ export function useGameLoop() {
   const dispatch = useCallback(
     (intent: GameIntent) => {
       setSyncedState(applyIntent(stateRef.current, intent))
-      accumulatorRef.current = 0
       lastFrameAtRef.current = null
     },
     [setSyncedState],
@@ -75,7 +73,7 @@ export function useGameLoop() {
             ...inputRef.current,
             [mappedKey]: false,
           }
-        }, GAME_CONFIG.tickMs)
+        }, GAME_CONFIG.inputTapBufferMs)
         event.preventDefault()
       }
     }
@@ -99,16 +97,9 @@ export function useGameLoop() {
 
     function animate(frameAt: number) {
       const lastFrameAt = lastFrameAtRef.current ?? frameAt
-      const deltaMs = Math.min(frameAt - lastFrameAt, 240)
+      const deltaMs = Math.min(frameAt - lastFrameAt, GAME_CONFIG.maxFrameDeltaMs)
       lastFrameAtRef.current = frameAt
-      accumulatorRef.current += deltaMs
-
-      let nextState = stateRef.current
-
-      while (accumulatorRef.current >= GAME_CONFIG.tickMs) {
-        nextState = stepGame(nextState, inputRef.current, GAME_CONFIG.tickMs)
-        accumulatorRef.current -= GAME_CONFIG.tickMs
-      }
+      const nextState = stepGame(stateRef.current, inputRef.current, deltaMs)
 
       if (nextState !== stateRef.current) {
         setSyncedState(nextState)

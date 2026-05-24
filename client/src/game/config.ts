@@ -1,5 +1,6 @@
 export const GAME_CONFIG = {
-  tickMs: 80,
+  inputTapBufferMs: 42,
+  maxFrameDeltaMs: 48,
   viewportRadius: 7,
   playerMaxHp: 100,
   playerSpeedUnitsPerSecond: 4.4,
@@ -16,7 +17,9 @@ export const GAME_CONFIG = {
   enemyXp: 1,
   pawnStrikeCooldownMs: 1150,
   pawnStrikeDamage: 10,
-  pawnStrikeRange: 2,
+  pawnStrikeRange: 2.65,
+  pawnStrikeWidthUnits: 1.15,
+  pawnStrikeStartOffset: 0.48,
   attackEffectMs: 280,
   hitEffectMs: 420,
   deathEffectMs: 480,

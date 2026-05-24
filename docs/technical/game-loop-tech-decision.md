@@ -8,7 +8,7 @@ The selected stack is:
 
 - Vite for dev server and production static build.
 - React for screen orchestration, HUD, level-up cards, result modals, and the visible board renderer.
-- Plain TypeScript modules for world math, fixed-step game loop, enemies, weapons, collisions, XP, waves, and effects.
+- Plain TypeScript modules for world math, frame-delta game loop, enemies, weapons, collisions, XP, waves, and effects.
 - DOM/CSS grid for the rendered chess viewport, with absolute overlay layers for entities, attacks, XP, and damage numbers.
 - No backend, accounts, leaderboard, multiplayer, or live AI API in the game loop.
 
@@ -43,7 +43,7 @@ Use a headless game engine that produces a render snapshot each tick:
 ```text
 Keyboard input
   -> input queue
-  -> fixed-step engine update
+  -> per-frame deltaTime engine update
   -> game state
   -> render frame snapshot
   -> React board/HUD/modals
@@ -54,8 +54,9 @@ The engine owns all gameplay rules. React only dispatches player intents and ren
 Recommended timing:
 
 - `requestAnimationFrame` loop in a React hook.
-- Fixed simulation step of 80-125ms for continuous player/enemy movement, cooldowns, collisions, XP pickup, and wave timers.
-- Visual interpolation via CSS transitions for movement and short-lived effects.
+- Each `requestAnimationFrame` calls `stepGame(state, input, deltaMs)`.
+- Player and enemy positions update with `normalizedDirection * speedUnitsPerSecond * (deltaMs / 1000)`, Unity-style.
+- CSS transitions should not smooth entity position; movement comes from per-frame state updates. CSS is only for short-lived effects.
 - Pause simulation when phase is `levelUp`, `gameOver`, or `victory`.
 
 Game phases:
@@ -84,7 +85,7 @@ Create these under `client/src/game`:
 - `systems/upgradeSystem.ts`: generate 3 cards, apply selected upgrade, resume play.
 - `systems/waveSystem.ts`: elapsed-time wave escalation and optional boss trigger.
 - `systems/effectSystem.ts`: damage numbers, hit flashes, attack telegraphs, death pops, XP pickup effects.
-- `useGameLoop.ts`: React hook that owns the RAF, fixed-step accumulator, pause/resume, and dispatch API.
+- `useGameLoop.ts`: React hook that owns the RAF, deltaTime clamp, pause/resume, and dispatch API.
 
 Create/adjust these under `client/src/components`:
 
@@ -156,6 +157,9 @@ export type RenderEffect = {
   coord: GridCoord
   cells?: GridCoord[]
   value?: number
+  widthUnits?: number
+  heightUnits?: number
+  rotationDeg?: number
   createdAtMs: number
   expiresAtMs: number
 }
@@ -263,13 +267,14 @@ Rules:
 
 The board is infinite in logic and finite in rendering.
 
-Movement update, 2026-05-24: player and enemy movement is continuous, not one-cell-at-a-time. `GridCoord` is still the shared world-coordinate type, but entity positions may be fractional. Chess attacks snap from the king's nearest cell into discrete attack cells.
+Movement update, 2026-05-24: player and enemy movement is continuous, not one-cell-at-a-time. `GridCoord` is still the shared world-coordinate type, but entity positions may be fractional. Chess attacks are anchored to the character's current fractional world position; they should not snap the king or enemy positions to cells.
 
 World rules:
 
 - Every important object uses `GridCoord` world coordinates.
 - Entities may have fractional coordinates for free movement.
-- Chessboard cells, attack cells, and cell parity use snapped integer coordinates.
+- Chessboard cells and cell parity use integer coordinates.
+- Attacks use continuous world areas or rays anchored to the player's current position. They may borrow chess directions/pattern language, but hit detection must use world-space geometry.
 - Coordinates can be negative or positive without bounds.
 - Cells are not stored unless an entity/effect/drop references them.
 - Cell color is generated from `(x + y) % 2`.
@@ -298,7 +303,8 @@ Collision rules:
 
 - King contact damage uses distance/radius against enemy world coordinates and `invulnerableUntilMs <= now`.
 - XP pickup uses distance/radius against fractional world coordinates.
-- Weapon attacks resolve by snapping the king and enemies to nearest chess cells, then applying generated chess-pattern attack cells.
+- Weapon attacks resolve against continuous world-space areas/rays/circles anchored to the character position.
+- Pawn Strike is a forward rectangular/capsule area from the king's current position and facing direction, not a list of occupied cells.
 - Pixel-perfect collision and physics bodies are out of scope.
 
 ## Testing And Verification
@@ -336,7 +342,7 @@ Mitigation: render only a bounded viewport and nearby entities, keep effect TTLs
 
 Risk: DOM effects become visually chaotic.
 
-Mitigation: keep attack highlights cell-based, cap simultaneous damage numbers, and prioritize readability over particles.
+Mitigation: keep attack highlights simple continuous shapes, cap simultaneous damage numbers, and prioritize readability over particles.
 
 Risk: Infinite board removes pressure.
 

@@ -65,6 +65,9 @@ export type VisualEffectState = {
   coord: GridCoord
   cells?: GridCoord[]
   value?: number
+  widthUnits?: number
+  heightUnits?: number
+  rotationDeg?: number
   expiresAtMs: number
 }
 
@@ -124,6 +127,9 @@ export type RenderEffect = {
   coord: GridCoord
   cells?: GridCoord[]
   value?: number
+  widthUnits?: number
+  heightUnits?: number
+  rotationDeg?: number
 }
 
 export type HudState = {

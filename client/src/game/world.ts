@@ -115,6 +115,18 @@ export function directionVector(direction: Direction) {
   }
 }
 
+export function directionUnitVector(direction: Direction) {
+  const vector = directionVector(direction)
+
+  return normalizeVector(vector.dx, vector.dy)
+}
+
+export function directionRotationDeg(direction: Direction) {
+  const vector = directionUnitVector(direction)
+
+  return (Math.atan2(vector.dy, vector.dx) * 180) / Math.PI
+}
+
 export function chebyshevDistance(a: GridCoord, b: GridCoord) {
   return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y))
 }
@@ -145,6 +157,47 @@ export function snapToCell(coord: GridCoord): GridCoord {
     x: Math.round(coord.x),
     y: Math.round(coord.y),
   }
+}
+
+export function getForwardArea(
+  origin: GridCoord,
+  facing: Direction,
+  length: number,
+  width: number,
+  startOffset: number,
+) {
+  const forward = directionUnitVector(facing)
+
+  return {
+    center: {
+      x: origin.x + forward.dx * (startOffset + length / 2),
+      y: origin.y + forward.dy * (startOffset + length / 2),
+    },
+    length,
+    width,
+    rotationDeg: directionRotationDeg(facing),
+  }
+}
+
+export function isCoordInForwardArea(
+  coord: GridCoord,
+  origin: GridCoord,
+  facing: Direction,
+  length: number,
+  width: number,
+  startOffset: number,
+) {
+  const forward = directionUnitVector(facing)
+  const relX = coord.x - origin.x
+  const relY = coord.y - origin.y
+  const forwardDistance = relX * forward.dx + relY * forward.dy
+  const sideDistance = Math.abs(relX * -forward.dy + relY * forward.dx)
+
+  return (
+    forwardDistance >= startOffset &&
+    forwardDistance <= startOffset + length &&
+    sideDistance <= width / 2
+  )
 }
 
 export function getPawnStrikeCells(origin: GridCoord, facing: Direction, range: number) {
