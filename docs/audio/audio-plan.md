@@ -2,82 +2,87 @@
 
 ## Selection Summary
 
-Status: selected and downloaded.
+Status: selected, downloaded, and replaced with a casino/arcade direction.
 
-Target mood: dark royal fantasy, tense, ritual-like, and readable. The game should feel like a corrupted throne room expanding into an endless board, not like a loud action trailer. Music stays low and ominous; SFX carry most of the moment-to-moment feedback.
+Important legal note: no audio was copied from Vampire Survivors. That game's assets are commercial copyrighted material. This pack uses legal CC0 sources with a similar functional goal: fast reward feedback, bright coin blips, chip clicks, jackpot stingers, and upbeat chiptune energy.
 
-All selected assets are CC0. Attribution is not required, but credits are documented in `docs/audio/audio-credits.md`.
+Target mood: cheerful arcade casino survival. The board should feel like a cursed chess machine paying out every few seconds: chips for movement and combat, coins for XP, short jackpot bursts for upgrades, and a happy dynamic music loop under the run.
 
 Downloaded folder:
 
 `C:\Programming\hackaton\public\audio`
 
-Current total size: about 2.9 MB.
+Current total size: about 0.55 MB.
 
 ## Event Map
 
 | Event | File | Recommended volume | Usage note |
 | --- | --- | ---: | --- |
-| Background music loop | `public/audio/music_dark_shrine_loop.ogg` | 0.26 | Start on run start after user gesture. Keep under SFX. |
-| UI click/select | `public/audio/ui_click_select.wav` | 0.35 | Buttons, card select, retry select. |
-| King move | `public/audio/king_move.wav` | 0.24 | One-cell movement. Add slight pitch variance if easy. |
-| King hit | `public/audio/king_hit.wav` | 0.68 | Player damage. Pair with hit flash/shake. |
-| Enemy hit | `public/audio/enemy_hit.wav` | 0.38 | Weapon impact on enemy. Limit simultaneous voices. |
-| Enemy death | `public/audio/enemy_death.wav` | 0.42 | Corrupted piece removed. Use lower volume during swarms. |
-| XP pickup | `public/audio/xp_pickup.wav` | 0.26 | Pickup shard. Pitch randomization helps repeated pickups. |
-| Level-up | `public/audio/level_up.wav` | 0.72 | Play when upgrade cards appear. Duck music briefly. |
-| Weapon proc / attack whoosh | `public/audio/attack_whoosh.wav` | 0.32 | Auto weapon fire. Cap to avoid machine-gun noise. |
-| Boss warning | `public/audio/boss_warning.wav` | 0.78 | Telegraph boss spawn or corruption surge. Optional music duck. |
-| Game over | `public/audio/game_over.wav` | 0.74 | Death/result screen. Stop or fade music first. |
-| Victory | `public/audio/victory.wav` | 0.70 | Win/result screen. Stop or fade music first. |
+| Background music loop | `public/audio/music_arcade_invincibility_loop.ogg` | 0.22 | Upbeat 8-bit loop. Start on `Start Run` after user gesture. |
+| UI click/select | `public/audio/ui_click_select.ogg` | 0.40 | Buttons, card select, retry select. Crisp casino chip tap. |
+| King move | `public/audio/king_move_chip_tick.ogg` | 0.24 | One-cell movement. Treat each move like a slot-machine tick. |
+| King hit | `public/audio/king_hit_chip_clack.ogg` | 0.62 | Player damage. Keep sharp and louder than enemy hits. |
+| Enemy hit | `public/audio/enemy_hit_chip_clack.ogg` | 0.34 | Weapon impact on enemy. Cap simultaneous voices. |
+| Enemy death | `public/audio/enemy_death_chip_payout.ogg` | 0.42 | Small chip payout when a corrupted piece dies. |
+| XP pickup | `public/audio/xp_pickup_coin_blip.wav` | 0.32 | Main dopamine sound. Add pitch variance for pickup streams. |
+| Extra pickup / bonus | `public/audio/bonus_coin_blip.wav` | 0.28 | Optional alternate for larger XP gems or chained pickups. |
+| Level-up | `public/audio/level_up_jackpot.ogg` | 0.76 | Local CC0-derived mini jackpot from coin blips. |
+| Weapon proc / attack whoosh | `public/audio/attack_card_whoosh.ogg` | 0.30 | Auto weapon fire, especially bishop/rook/queen pattern reveals. |
+| Boss warning | `public/audio/boss_warning_slot_rattle.ogg` | 0.72 | Reel-rattle warning before boss or corruption surge. |
+| Game over | `public/audio/game_over_bust.ogg` | 0.70 | "Bust" style dice/chip fall. Stop or fade music first. |
+| Victory | `public/audio/victory_jackpot.ogg` | 0.78 | Jackpot payout stinger. Stop or fade music first. |
 
 ## Loop Strategy
 
-Use `music_dark_shrine_loop.ogg` as the default run loop.
+Use `music_arcade_invincibility_loop.ogg` as the default run loop.
 
 Recommended hackathon implementation:
 
 - Create one persistent `HTMLAudioElement` for music.
 - Set `loop = true`.
 - Start after the first user gesture, ideally `Start Run`.
-- Fade in over 500-800 ms.
-- Keep music at about 0.26 master volume during normal play.
-- Duck to about 0.12 for 700-1000 ms on level-up and boss warning if easy.
-- Fade out over 500 ms on game over or victory.
+- Fade in over 250-500 ms.
+- Keep music at about 0.22 master volume during normal play so coin/chip SFX stay readable.
+- Duck music to about 0.10 for 500-800 ms on level-up, boss warning, game over, and victory.
+- Fade out over 400-600 ms on game over or victory.
 
-If gapless looping becomes noticeable, keep the same asset but switch music playback to Web Audio with a decoded `AudioBufferSourceNode`. For hackathon scope, native `loop` is acceptable.
+If the loop feels too intense for longer runs, expose only one tuning value first: `musicVolume`. Do not spend hackathon time building a full adaptive music system.
 
 ## Mix Rules
 
-- SFX master around 0.65, music master around 0.26.
-- Repeated sounds should have a small pitch range when possible:
-  - XP pickup: 0.94-1.10
-  - King move: 0.96-1.04
-  - Enemy hit: 0.92-1.06
+- SFX master around 0.70, music master around 0.22.
+- Repeated sounds should use small pitch variation:
+  - XP pickup: 0.88-1.18
+  - King move: 0.96-1.05
+  - Enemy hit: 0.92-1.08
+  - Enemy death: 0.95-1.10
 - Voice caps:
-  - `attack_whoosh`: max 3 active
-  - `enemy_hit`: max 4 active
-  - `xp_pickup`: max 5 active, or batch pickups into one sound every 60-90 ms
+  - `xp_pickup_coin_blip`: max 6 active, or batch pickups every 50-80 ms.
+  - `enemy_hit_chip_clack`: max 4 active.
+  - `attack_card_whoosh`: max 3 active.
+  - `king_move_chip_tick`: max 2 active.
 - Critical feedback priority:
   1. king hit
-  2. level-up
-  3. boss warning
+  2. level-up jackpot
+  3. boss warning rattle
   4. XP pickup
-  5. enemy hit/death
-  6. attack whoosh
+  5. enemy death payout
+  6. enemy hit / attack whoosh
+  7. king move / UI click
 
 ## Fallback Plan
 
 If audio wiring is running late, implement only this minimal set:
 
-- `music_dark_shrine_loop.ogg`
-- `king_hit.wav`
-- `xp_pickup.wav`
-- `level_up.wav`
-- `game_over.wav`
-- `victory.wav`
+- `music_arcade_invincibility_loop.ogg`
+- `king_move_chip_tick.ogg`
+- `xp_pickup_coin_blip.wav`
+- `level_up_jackpot.ogg`
+- `boss_warning_slot_rattle.ogg`
+- `game_over_bust.ogg`
+- `victory_jackpot.ogg`
 
-If there is not enough time for music, wire SFX only. The first 30 seconds benefit most from king movement, XP pickup, and level-up feedback.
+If there is not enough time for music, wire SFX only. The first 30 seconds benefit most from movement ticks, XP coin blips, and the level-up jackpot.
 
 If no audio is wired, keep the game silent instead of throwing load/play errors. Audio should never block run start, movement, combat, or retry.
 
@@ -98,6 +103,7 @@ type AudioKey =
   | "enemyHit"
   | "enemyDeath"
   | "xpPickup"
+  | "bonusPickup"
   | "levelUp"
   | "attackWhoosh"
   | "bossWarning"
