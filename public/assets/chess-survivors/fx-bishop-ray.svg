@@ -1,0 +1,20 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Bishop Ray</title>
+  <defs>
+    <linearGradient id="bishopRay" x1="12" y1="116" x2="116" y2="12" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#63C7FF" stop-opacity="0"/>
+      <stop offset="0.28" stop-color="#F0E5C7" stop-opacity="0.4"/>
+      <stop offset="0.5" stop-color="#FFD56A" stop-opacity="0.9"/>
+      <stop offset="0.72" stop-color="#F0E5C7" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#63C7FF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="bishopRayGlow" x="0" y="0" width="128" height="128" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FFD56A" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <g filter="url(#bishopRayGlow)">
+    <path d="M9 112L112 9L121 18L18 121L9 112Z" fill="url(#bishopRay)" stroke="#F0E5C7" stroke-width="2" stroke-opacity="0.55"/>
+    <path d="M19 95L95 19" stroke="#63C7FF" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+    <path d="M34 116L116 34" stroke="#B82537" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+  </g>
+</svg>

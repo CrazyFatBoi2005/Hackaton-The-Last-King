@@ -1,0 +1,22 @@
+<svg width="256" height="352" viewBox="0 0 256 352" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Level-Up Card Frame</title>
+  <defs>
+    <linearGradient id="cardBg" x1="28" y1="18" x2="228" y2="334" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22252C"/>
+      <stop offset="0.68" stop-color="#15181D"/>
+      <stop offset="1" stop-color="#3B0F19"/>
+    </linearGradient>
+    <filter id="cardShadow" x="10" y="10" width="236" height="332" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="14" stdDeviation="10" flood-color="#000000" flood-opacity="0.58"/>
+    </filter>
+  </defs>
+  <g filter="url(#cardShadow)">
+    <rect x="24" y="20" width="208" height="312" rx="8" fill="url(#cardBg)" stroke="#D9AA3A" stroke-width="4"/>
+    <rect x="38" y="36" width="180" height="280" rx="5" stroke="#F0E5C7" stroke-opacity="0.3" stroke-width="2"/>
+    <path d="M54 92H202" stroke="#D9AA3A" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    <path d="M54 258H202" stroke="#D9AA3A" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+    <circle cx="128" cy="154" r="46" fill="#D9AA3A" opacity="0.12" stroke="#D9AA3A" stroke-opacity="0.38" stroke-width="3"/>
+    <path d="M128 103L139 137L175 137L146 158L157 193L128 172L99 193L110 158L81 137L117 137L128 103Z" fill="#F0E5C7" opacity="0.28"/>
+    <rect x="24" y="20" width="208" height="26" rx="8" fill="#D9AA3A" opacity="0.22"/>
+  </g>
+</svg>

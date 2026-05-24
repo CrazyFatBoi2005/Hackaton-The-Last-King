@@ -1,0 +1,19 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Knight Pulse</title>
+  <defs>
+    <filter id="knightPulseGlow" x="0" y="0" width="128" height="128" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#63C7FF" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <g filter="url(#knightPulseGlow)" stroke="#63C7FF" stroke-width="4" stroke-linejoin="round">
+    <path d="M37 12L49 24L37 36L25 24L37 12Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M91 12L103 24L91 36L79 24L91 12Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M18 39L30 51L18 63L6 51L18 39Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M110 39L122 51L110 63L98 51L110 39Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M18 65L30 77L18 89L6 77L18 65Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M110 65L122 77L110 89L98 77L110 65Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M37 92L49 104L37 116L25 104L37 92Z" fill="#9A6CFF" fill-opacity="0.22"/>
+    <path d="M91 92L103 104L91 116L79 104L91 92Z" fill="#9A6CFF" fill-opacity="0.22"/>
+  </g>
+  <circle cx="64" cy="64" r="7" fill="#F0E5C7" opacity="0.35"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Fallen Queen</title>
+  <defs>
+    <linearGradient id="queenBody" x1="28" y1="14" x2="100" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD56A"/>
+      <stop offset="0.2" stop-color="#B82537"/>
+      <stop offset="0.72" stop-color="#171A1F"/>
+      <stop offset="1" stop-color="#3B0F19"/>
+    </linearGradient>
+    <radialGradient id="queenCore" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(64 68) rotate(90) scale(40)">
+      <stop stop-color="#FF445F" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#3B0F19" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="queenShadow" x="12" y="8" width="104" height="114" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="9" stdDeviation="6" flood-color="#000000" flood-opacity="0.68"/>
+    </filter>
+  </defs>
+  <circle cx="64" cy="64" r="52" fill="#B82537" opacity="0.12"/>
+  <g filter="url(#queenShadow)">
+    <path d="M27 106H101L107 119H21L27 106Z" fill="#101216" stroke="#5B1721" stroke-width="4"/>
+    <path d="M41 76H87L98 106H30L41 76Z" fill="url(#queenBody)" stroke="#08090B" stroke-width="4"/>
+    <path d="M33 54L40 22L55 48L64 17L73 48L88 22L95 54H33Z" fill="url(#queenBody)" stroke="#08090B" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M39 53H89L84 78H44L39 53Z" fill="url(#queenBody)" stroke="#08090B" stroke-width="4"/>
+    <circle cx="64" cy="69" r="30" fill="url(#queenCore)"/>
+    <path d="M49 66L64 84L80 58" stroke="#F0E5C7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.72"/>
+    <path d="M43 93H85" stroke="#FFD56A" stroke-width="4" stroke-linecap="round" opacity="0.65"/>
+    <path d="M52 33L48 50M76 33L80 50" stroke="#FF445F" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

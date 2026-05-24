@@ -1,0 +1,20 @@
+<svg width="512" height="128" viewBox="0 0 512 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Boss Warning Banner</title>
+  <defs>
+    <linearGradient id="warningBg" x1="20" y1="20" x2="492" y2="108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3B0F19"/>
+      <stop offset="0.5" stop-color="#15181D"/>
+      <stop offset="1" stop-color="#3B0F19"/>
+    </linearGradient>
+    <filter id="warningShadow" x="6" y="10" width="500" height="108" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+  <g filter="url(#warningShadow)">
+    <path d="M28 25H484L503 64L484 103H28L9 64L28 25Z" fill="url(#warningBg)" stroke="#B82537" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M48 42H464M48 86H464" stroke="#D9AA3A" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+    <text x="256" y="73" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="900" letter-spacing="2" fill="#F0E5C7" stroke="#15181D" stroke-width="4" paint-order="stroke">FALLEN QUEEN APPROACHES</text>
+    <path d="M72 64L91 48L110 64L91 80L72 64Z" fill="#B82537" opacity="0.72"/>
+    <path d="M402 64L421 48L440 64L421 80L402 64Z" fill="#B82537" opacity="0.72"/>
+  </g>
+</svg>

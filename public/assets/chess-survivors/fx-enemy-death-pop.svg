@@ -1,0 +1,21 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Enemy Death Pop</title>
+  <defs>
+    <radialGradient id="deathCore" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(48 48) rotate(90) scale(34)">
+      <stop stop-color="#FF445F" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#B82537" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="48" cy="48" r="34" fill="url(#deathCore)"/>
+  <g fill="#FF445F" stroke="#15181D" stroke-width="2" stroke-linejoin="round">
+    <path d="M48 7L54 31L42 31L48 7Z"/>
+    <path d="M80 18L69 41L61 33L80 18Z"/>
+    <path d="M90 50L66 56L66 44L90 50Z"/>
+    <path d="M77 82L58 64L68 58L77 82Z"/>
+    <path d="M48 89L42 65H54L48 89Z"/>
+    <path d="M18 78L34 59L41 68L18 78Z"/>
+    <path d="M7 49L31 43L31 55L7 49Z"/>
+    <path d="M19 17L39 33L30 41L19 17Z"/>
+  </g>
+  <circle cx="48" cy="48" r="9" fill="#FFD56A" opacity="0.8"/>
+</svg>

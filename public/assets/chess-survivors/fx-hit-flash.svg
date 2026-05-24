@@ -1,0 +1,13 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Hit Flash</title>
+  <defs>
+    <radialGradient id="hitFlash" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(48 48) rotate(90) scale(43)">
+      <stop stop-color="#F0E5C7" stop-opacity="0.95"/>
+      <stop offset="0.32" stop-color="#FFD56A" stop-opacity="0.62"/>
+      <stop offset="0.64" stop-color="#B82537" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#B82537" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="48" cy="48" r="43" fill="url(#hitFlash)"/>
+  <path d="M48 7L54 35L82 21L62 47L90 55L60 60L72 88L48 69L24 88L36 60L6 55L34 47L14 21L42 35L48 7Z" fill="#F0E5C7" opacity="0.55"/>
+</svg>

@@ -3,12 +3,16 @@
   display: grid;
   place-items: center;
   padding: 32px;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(11, 13, 16, 0.88), rgba(11, 13, 16, 0.98)),
+    var(--bg);
 }
 
 .game-start {
-  width: min(980px, 100%);
+  width: min(1040px, 100%);
   display: grid;
-  grid-template-columns: minmax(260px, 420px) minmax(280px, 1fr);
+  grid-template-columns: minmax(300px, 500px) minmax(280px, 1fr);
   align-items: center;
   gap: 48px;
 }
@@ -16,26 +20,108 @@
 .game-board-preview {
   aspect-ratio: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 12px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), inset 0 0 0 1px rgba(240, 229, 199, 0.06);
 }
 
-.game-board-preview span {
-  border-radius: 6px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent),
-    var(--tile);
+.preview-cell {
+  position: relative;
+  aspect-ratio: 1;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--tile);
 }
 
-.game-board-preview span:nth-child(2n) {
+.preview-cell:nth-child(2n) {
+  background: var(--tile-alt);
+}
+
+.preview-cell::before,
+.preview-cell::after {
+  position: absolute;
+  content: "";
+  inset: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.preview-cell--bishop-ray::before {
+  width: 150%;
+  height: 18%;
+  background: linear-gradient(90deg, transparent, var(--ivory), var(--gold-hot), transparent);
+  opacity: 0.74;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.preview-cell--pawn-strike::before {
+  width: 56%;
+  height: 84%;
+  background: linear-gradient(var(--gold-hot), rgba(184, 37, 55, 0.24));
+  clip-path: polygon(50% 0, 88% 42%, 64% 42%, 64% 100%, 36% 100%, 36% 42%, 12% 42%);
+  opacity: 0.82;
+}
+
+.preview-cell--rook-charge::before {
+  width: 125%;
+  height: 28%;
+  background: linear-gradient(90deg, transparent, var(--gold-hot), transparent);
+  opacity: 0.7;
+}
+
+.preview-cell--king::after {
+  width: 72%;
+  height: 86%;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent),
-    var(--tile-alt);
+    linear-gradient(180deg, var(--gold-hot), var(--gold) 62%, #7a4b18);
+  clip-path: polygon(19% 100%, 81% 100%, 73% 75%, 66% 42%, 82% 18%, 60% 37%, 50% 8%, 40% 37%, 18% 18%, 34% 42%, 27% 75%);
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.65));
+  outline: 2px solid rgba(240, 229, 199, 0.54);
+}
+
+.preview-cell--pawn::after,
+.preview-cell--rook::after,
+.preview-cell--knight::after,
+.preview-cell--queen-shadow::after {
+  width: 62%;
+  height: 72%;
+  background: linear-gradient(180deg, #2a2f37, var(--corruption-dark));
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.55));
+}
+
+.preview-cell--pawn::after {
+  border: 2px solid var(--crimson);
+  border-radius: 48% 48% 20% 20%;
+}
+
+.preview-cell--rook::after {
+  border: 2px solid var(--crimson);
+  clip-path: polygon(8% 100%, 92% 100%, 80% 24%, 94% 24%, 94% 0, 70% 0, 70% 22%, 55% 22%, 55% 0, 31% 0, 31% 22%, 16% 22%, 16% 0, 0 0, 0 24%, 20% 24%);
+}
+
+.preview-cell--knight::after {
+  border: 2px solid var(--magic-blue);
+  clip-path: polygon(18% 100%, 88% 100%, 63% 66%, 76% 48%, 67% 23%, 47% 0, 33% 21%, 12% 10%, 22% 45%, 8% 58%, 35% 64%);
+}
+
+.preview-cell--queen-shadow::after {
+  width: 78%;
+  height: 90%;
+  border: 2px solid var(--crimson-hot);
+  clip-path: polygon(8% 100%, 92% 100%, 78% 61%, 91% 22%, 68% 41%, 50% 4%, 32% 41%, 9% 22%, 22% 61%);
+  opacity: 0.82;
+}
+
+.preview-cell--xp::after {
+  width: 36%;
+  height: 48%;
+  background: linear-gradient(180deg, #fff2a8, var(--gold), var(--magic-blue));
+  clip-path: polygon(50% 0, 100% 42%, 50% 100%, 0 42%);
+  filter: drop-shadow(0 0 7px rgba(255, 213, 106, 0.65));
 }
 
 .intro {
@@ -54,7 +140,8 @@
 .intro h1 {
   margin: 0;
   color: var(--text-strong);
-  font-size: clamp(42px, 8vw, 84px);
+  max-width: 8ch;
+  font-size: clamp(50px, 8vw, 92px);
   line-height: 0.92;
 }
 
@@ -89,11 +176,11 @@
 }
 
 .server-pill--online .status-dot {
-  background: var(--success);
+  background: var(--gold-hot);
 }
 
 .server-pill--offline .status-dot {
-  background: var(--danger);
+  background: var(--crimson-hot);
 }
 
 @media (max-width: 760px) {

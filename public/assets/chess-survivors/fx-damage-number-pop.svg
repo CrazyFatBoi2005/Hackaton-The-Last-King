@@ -1,0 +1,12 @@
+<svg width="128" height="80" viewBox="0 0 128 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Damage Number Pop</title>
+  <defs>
+    <filter id="damageShadow" x="4" y="0" width="120" height="78" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000000" flood-opacity="0.75"/>
+    </filter>
+  </defs>
+  <g filter="url(#damageShadow)">
+    <text x="64" y="54" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="46" font-weight="900" fill="#FFD56A" stroke="#15181D" stroke-width="5" paint-order="stroke">12</text>
+    <path d="M98 21L110 14L106 27" stroke="#FF445F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

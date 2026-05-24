@@ -1,0 +1,18 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Rook Charge</title>
+  <defs>
+    <linearGradient id="rookChargeH" x1="4" y1="64" x2="124" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9AA3A" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFD56A" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#D9AA3A" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rookChargeV" x1="64" y1="4" x2="64" y2="124" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D9AA3A" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFD56A" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#D9AA3A" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path d="M4 54H124V74H4V54Z" fill="url(#rookChargeH)" stroke="#F0E5C7" stroke-width="2" stroke-opacity="0.45"/>
+  <path d="M54 4H74V124H54V4Z" fill="url(#rookChargeV)" stroke="#F0E5C7" stroke-width="2" stroke-opacity="0.38"/>
+  <circle cx="64" cy="64" r="11" fill="#F0E5C7" opacity="0.38"/>
+</svg>

@@ -1,6 +1,19 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+const previewMarkers: Record<number, string> = {
+  3: 'bishop-ray',
+  8: 'knight',
+  10: 'pawn',
+  17: 'pawn-strike',
+  24: 'king',
+  31: 'rook-charge',
+  34: 'xp',
+  38: 'rook',
+  40: 'pawn',
+  45: 'queen-shadow',
+}
+
 type HealthState =
   | { status: 'checking' }
   | { status: 'online'; service: string; time: string }
@@ -40,23 +53,23 @@ function App() {
     <main className="app-shell">
       <section className="game-start">
         <div className="game-board-preview" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
-          <span />
+          {Array.from({ length: 49 }, (_, index) => {
+            const marker = previewMarkers[index]
+
+            return (
+              <span
+                key={index}
+                className={`preview-cell${marker ? ` preview-cell--${marker}` : ''}`}
+              />
+            )
+          })}
         </div>
 
         <div className="intro">
-          <p className="label">main game workspace</p>
-          <h1>Hackaton Game</h1>
+          <p className="label">dark royal fantasy prototype</p>
+          <h1>Chess Survivors</h1>
           <p>
-            React client and classic Express server are connected. Next step is
-            choosing the core game loop and building the first playable minute.
+            Move the king. Survive the board. Choose royal upgrades.
           </p>
 
           <div className={`server-pill server-pill--${health.status}`}>

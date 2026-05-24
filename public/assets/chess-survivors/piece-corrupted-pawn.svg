@@ -1,0 +1,21 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Corrupted Pawn</title>
+  <defs>
+    <linearGradient id="pawnBody" x1="29" y1="16" x2="67" y2="84" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#272B31"/>
+      <stop offset="0.58" stop-color="#171A1F"/>
+      <stop offset="1" stop-color="#3B0F19"/>
+    </linearGradient>
+    <filter id="pawnShadow" x="16" y="12" width="64" height="80" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <g filter="url(#pawnShadow)">
+    <path d="M28 81H68L63 88H33L28 81Z" fill="#111317" stroke="#5B1721" stroke-width="3"/>
+    <path d="M34 61H62L68 81H28L34 61Z" fill="url(#pawnBody)" stroke="#08090B" stroke-width="3"/>
+    <path d="M32 41C32 28 39 17 48 17C57 17 64 28 64 41C64 54 57 63 48 63C39 63 32 54 32 41Z" fill="url(#pawnBody)" stroke="#08090B" stroke-width="3"/>
+    <path d="M44 24C52 32 47 41 58 50" stroke="#FF445F" stroke-width="4" stroke-linecap="round"/>
+    <path d="M38 47L48 58L42 63" stroke="#B82537" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="55" cy="36" r="4" fill="#FF445F"/>
+  </g>
+</svg>

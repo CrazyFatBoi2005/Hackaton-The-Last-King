@@ -1,0 +1,24 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Last King</title>
+  <defs>
+    <linearGradient id="kingGold" x1="24" y1="12" x2="72" y2="86" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD56A"/>
+      <stop offset="0.58" stop-color="#D9AA3A"/>
+      <stop offset="1" stop-color="#7A4B18"/>
+    </linearGradient>
+    <filter id="kingShadow" x="8" y="8" width="80" height="84" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+  <circle cx="48" cy="51" r="35" fill="#D9AA3A" opacity="0.16"/>
+  <path d="M48 9V25" stroke="#F0E5C7" stroke-width="6" stroke-linecap="round"/>
+  <path d="M39 17H57" stroke="#F0E5C7" stroke-width="5" stroke-linecap="round"/>
+  <g filter="url(#kingShadow)">
+    <path d="M22 78H74L70 87H26L22 78Z" fill="#15181D" stroke="#F0E5C7" stroke-width="2"/>
+    <path d="M31 64H65L70 78H26L31 64Z" fill="url(#kingGold)" stroke="#15181D" stroke-width="3"/>
+    <path d="M35 42H61L66 64H30L35 42Z" fill="url(#kingGold)" stroke="#15181D" stroke-width="3"/>
+    <path d="M30 41L36 23L45 38L48 26L51 38L60 23L66 41H30Z" fill="url(#kingGold)" stroke="#15181D" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M37 46H59" stroke="#F0E5C7" stroke-width="3" stroke-linecap="round" opacity="0.82"/>
+    <path d="M39 59H57" stroke="#5A3713" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+  </g>
+</svg>

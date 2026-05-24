@@ -1,0 +1,18 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors XP Shard</title>
+  <defs>
+    <linearGradient id="xpGold" x1="20" y1="7" x2="44" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF2A8"/>
+      <stop offset="0.52" stop-color="#D9AA3A"/>
+      <stop offset="1" stop-color="#63C7FF"/>
+    </linearGradient>
+    <filter id="xpGlow" x="7" y="3" width="50" height="58" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FFD56A" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <g filter="url(#xpGlow)">
+    <path d="M32 5L50 27L32 59L14 27L32 5Z" fill="url(#xpGold)" stroke="#15181D" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M32 5V59" stroke="#F0E5C7" stroke-width="2" opacity="0.55"/>
+    <path d="M18 27H50" stroke="#F0E5C7" stroke-width="2" opacity="0.5"/>
+  </g>
+</svg>

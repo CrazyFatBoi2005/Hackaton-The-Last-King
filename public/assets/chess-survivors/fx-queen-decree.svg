@@ -1,0 +1,20 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Chess Survivors Queen Decree</title>
+  <defs>
+    <radialGradient id="queenDecreeCore" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(80 80) rotate(90) scale(56)">
+      <stop stop-color="#FFD56A" stop-opacity="0.86"/>
+      <stop offset="0.42" stop-color="#F0E5C7" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#B82537" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="queenDecreeGlow" x="0" y="0" width="160" height="160" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#FFD56A" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <circle cx="80" cy="80" r="58" fill="url(#queenDecreeCore)"/>
+  <g filter="url(#queenDecreeGlow)" stroke-linecap="round">
+    <path d="M80 10V150M10 80H150" stroke="#FFD56A" stroke-width="10" opacity="0.6"/>
+    <path d="M30 30L130 130M130 30L30 130" stroke="#F0E5C7" stroke-width="8" opacity="0.44"/>
+    <path d="M80 25V135M25 80H135" stroke="#B82537" stroke-width="3" opacity="0.45"/>
+  </g>
+  <circle cx="80" cy="80" r="13" fill="#F0E5C7" opacity="0.55"/>
+</svg>
