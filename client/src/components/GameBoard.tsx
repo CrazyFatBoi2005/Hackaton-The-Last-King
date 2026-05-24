@@ -23,7 +23,7 @@ export function GameBoard({ frame }: GameBoardProps) {
   return (
     <section className="game-board-shell" aria-label="Chess Survivors game board">
       <div className="board-coordinate">
-        ({frame.viewport.center.x}, {frame.viewport.center.y})
+        ({frame.viewport.center.x.toFixed(1)}, {frame.viewport.center.y.toFixed(1)})
       </div>
 
       <div className="game-board" style={gridStyle}>
@@ -31,10 +31,7 @@ export function GameBoard({ frame }: GameBoardProps) {
           <div
             className={`board-cell board-cell--${cell.parity}`}
             key={cell.key}
-            style={{
-              gridColumn: getScreenPosition(cell.coord, frame.viewport).col + 1,
-              gridRow: getScreenPosition(cell.coord, frame.viewport).row + 1,
-            }}
+            style={worldPosition(cell.coord, frame)}
           />
         ))}
 
@@ -88,10 +85,14 @@ export function GameBoard({ frame }: GameBoardProps) {
 }
 
 function gridPosition(coord: { x: number; y: number }, frame: RenderFrame): CSSProperties {
+  return worldPosition(coord, frame)
+}
+
+function worldPosition(coord: { x: number; y: number }, frame: RenderFrame): CSSProperties {
   const position = getScreenPosition(coord, frame.viewport)
 
   return {
-    gridColumn: position.col + 1,
-    gridRow: position.row + 1,
+    left: `calc(var(--board-pad) + ${position.x.toFixed(3)} * var(--cell-size))`,
+    top: `calc(var(--board-pad) + ${position.y.toFixed(3)} * var(--cell-size))`,
   }
 }

@@ -2,24 +2,26 @@ import { GAME_CONFIG } from './config'
 import type { BoardCell, Direction, GridCoord, InputState, Viewport } from './types'
 
 export function coordKey(coord: GridCoord) {
-  return `${coord.x}:${coord.y}`
+  return `${Math.round(coord.x)}:${Math.round(coord.y)}`
 }
 
 export function getCellParity(coord: GridCoord): BoardCell['parity'] {
-  return Math.abs(coord.x + coord.y) % 2 === 0 ? 'light' : 'dark'
+  return Math.abs(Math.round(coord.x) + Math.round(coord.y)) % 2 === 0 ? 'light' : 'dark'
 }
 
 export function getViewport(center: GridCoord): Viewport {
   const radius = GAME_CONFIG.viewportRadius
+  const anchorX = Math.floor(center.x)
+  const anchorY = Math.floor(center.y)
 
   return {
     center,
     radiusX: radius,
     radiusY: radius,
-    minX: center.x - radius,
-    maxX: center.x + radius,
-    minY: center.y - radius,
-    maxY: center.y + radius,
+    minX: anchorX - radius - 1,
+    maxX: anchorX + radius + 1,
+    minY: anchorY - radius - 1,
+    maxY: anchorY + radius + 1,
     width: radius * 2 + 1,
     height: radius * 2 + 1,
   }
@@ -45,17 +47,17 @@ export function getVisibleCells(viewport: Viewport): BoardCell[] {
 
 export function isCoordInViewport(coord: GridCoord, viewport: Viewport) {
   return (
-    coord.x >= viewport.minX &&
-    coord.x <= viewport.maxX &&
-    coord.y >= viewport.minY &&
-    coord.y <= viewport.maxY
+    coord.x >= viewport.center.x - viewport.radiusX - 1 &&
+    coord.x <= viewport.center.x + viewport.radiusX + 1 &&
+    coord.y >= viewport.center.y - viewport.radiusY - 1 &&
+    coord.y <= viewport.center.y + viewport.radiusY + 1
   )
 }
 
 export function getScreenPosition(coord: GridCoord, viewport: Viewport) {
   return {
-    col: coord.x - viewport.minX,
-    row: coord.y - viewport.minY,
+    x: coord.x - viewport.center.x + viewport.radiusX,
+    y: coord.y - viewport.center.y + viewport.radiusY,
   }
 }
 
@@ -64,6 +66,19 @@ export function getInputVector(input: InputState) {
   const dy = Number(input.down) - Number(input.up)
 
   return { dx, dy }
+}
+
+export function normalizeVector(dx: number, dy: number) {
+  const length = Math.hypot(dx, dy)
+
+  if (length === 0) {
+    return { dx: 0, dy: 0 }
+  }
+
+  return {
+    dx: dx / length,
+    dy: dy / length,
+  }
 }
 
 export function directionFromVector(dx: number, dy: number, fallback: Direction): Direction {
@@ -104,10 +119,31 @@ export function chebyshevDistance(a: GridCoord, b: GridCoord) {
   return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y))
 }
 
-export function stepToward(from: GridCoord, to: GridCoord): GridCoord {
+export function distanceBetween(a: GridCoord, b: GridCoord) {
+  return Math.hypot(a.x - b.x, a.y - b.y)
+}
+
+export function moveToward(from: GridCoord, to: GridCoord, maxDistance: number): GridCoord {
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const distance = Math.hypot(dx, dy)
+
+  if (distance === 0 || distance <= maxDistance) {
+    return to
+  }
+
+  const scale = maxDistance / distance
+
   return {
-    x: from.x + Math.sign(to.x - from.x),
-    y: from.y + Math.sign(to.y - from.y),
+    x: from.x + dx * scale,
+    y: from.y + dy * scale,
+  }
+}
+
+export function snapToCell(coord: GridCoord): GridCoord {
+  return {
+    x: Math.round(coord.x),
+    y: Math.round(coord.y),
   }
 }
 

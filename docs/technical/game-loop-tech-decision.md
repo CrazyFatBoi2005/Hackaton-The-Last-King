@@ -54,7 +54,7 @@ The engine owns all gameplay rules. React only dispatches player intents and ren
 Recommended timing:
 
 - `requestAnimationFrame` loop in a React hook.
-- Fixed simulation step of 100ms or 125ms for grid movement, enemy movement, cooldowns, collisions, XP pickup, and wave timers.
+- Fixed simulation step of 80-125ms for continuous player/enemy movement, cooldowns, collisions, XP pickup, and wave timers.
 - Visual interpolation via CSS transitions for movement and short-lived effects.
 - Pause simulation when phase is `levelUp`, `gameOver`, or `victory`.
 
@@ -263,9 +263,13 @@ Rules:
 
 The board is infinite in logic and finite in rendering.
 
+Movement update, 2026-05-24: player and enemy movement is continuous, not one-cell-at-a-time. `GridCoord` is still the shared world-coordinate type, but entity positions may be fractional. Chess attacks snap from the king's nearest cell into discrete attack cells.
+
 World rules:
 
-- Every important object uses integer `GridCoord` world coordinates.
+- Every important object uses `GridCoord` world coordinates.
+- Entities may have fractional coordinates for free movement.
+- Chessboard cells, attack cells, and cell parity use snapped integer coordinates.
 - Coordinates can be negative or positive without bounds.
 - Cells are not stored unless an entity/effect/drop references them.
 - Cell color is generated from `(x + y) % 2`.
@@ -278,8 +282,8 @@ Camera/viewport rules:
 - World-to-screen mapping is deterministic:
 
 ```ts
-screenCol = coord.x - viewport.minX
-screenRow = coord.y - viewport.minY
+screenX = coord.x - viewport.center.x + viewport.radiusX
+screenY = coord.y - viewport.center.y + viewport.radiusY
 ```
 
 Spawn rules:
@@ -292,10 +296,10 @@ Spawn rules:
 
 Collision rules:
 
-- Grid overlap is enough for MVP hit detection.
-- King takes damage when an enemy shares the king's coord and `invulnerableUntilMs <= now`.
-- Weapon attacks resolve by generated chess-pattern cells against enemy coords.
-- Continuous physics, pathfinding, and pixel-perfect collision are out of scope.
+- King contact damage uses distance/radius against enemy world coordinates and `invulnerableUntilMs <= now`.
+- XP pickup uses distance/radius against fractional world coordinates.
+- Weapon attacks resolve by snapping the king and enemies to nearest chess cells, then applying generated chess-pattern attack cells.
+- Pixel-perfect collision and physics bodies are out of scope.
 
 ## Testing And Verification
 

@@ -11,7 +11,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
       <div>
         <p className="label">Chess Survivors</p>
         <h1>The Last King</h1>
-        <p>Move the king. Survive the board. Pawn Strike fires automatically.</p>
+        <p>Move freely. Survive the board. Pawn Strike fires automatically.</p>
         <button className="primary-button" type="button" onClick={onStart}>
           Start Run
         </button>

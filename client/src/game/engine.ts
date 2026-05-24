@@ -3,13 +3,16 @@ import {
   chebyshevDistance,
   coordKey,
   directionFromVector,
+  distanceBetween,
   getInputVector,
   getPawnStrikeCells,
   getSpawnCoord,
   getViewport,
   getVisibleCells,
   isCoordInViewport,
-  stepToward,
+  moveToward,
+  normalizeVector,
+  snapToCell,
 } from './world'
 import type {
   EnemyState,
@@ -31,7 +34,6 @@ export function createInitialGameState(phase: GameState['phase'] = 'menu'): Game
       facing: 'east',
       hp: GAME_CONFIG.playerMaxHp,
       maxHp: GAME_CONFIG.playerMaxHp,
-      nextMoveAtMs: 0,
       invulnerableUntilMs: 0,
     },
     enemies: [],
@@ -79,9 +81,9 @@ export function stepGame(state: GameState, input: InputState, dtMs: number): Gam
     },
   }
 
-  next = movePlayer(next, input)
+  next = movePlayer(next, input, dtMs)
   next = spawnEnemies(next)
-  next = moveEnemies(next)
+  next = moveEnemies(next, dtMs)
   next = fireWeapon(next)
   next = collectXp(next)
   next = applyContactDamage(next)
@@ -151,25 +153,26 @@ export function getRenderFrame(state: GameState): RenderFrame {
   }
 }
 
-function movePlayer(state: GameState, input: InputState): GameState {
+function movePlayer(state: GameState, input: InputState, dtMs: number): GameState {
   const { dx, dy } = getInputVector(input)
 
-  if ((dx === 0 && dy === 0) || state.nowMs < state.player.nextMoveAtMs) {
+  if (dx === 0 && dy === 0) {
     return state
   }
 
+  const movement = normalizeVector(dx, dy)
   const facing = directionFromVector(dx, dy, state.player.facing)
+  const distance = GAME_CONFIG.playerSpeedUnitsPerSecond * (dtMs / 1000)
 
   return {
     ...state,
     player: {
       ...state.player,
       coord: {
-        x: state.player.coord.x + dx,
-        y: state.player.coord.y + dy,
+        x: state.player.coord.x + movement.dx * distance,
+        y: state.player.coord.y + movement.dy * distance,
       },
       facing,
-      nextMoveAtMs: state.nowMs + GAME_CONFIG.playerMoveCooldownMs,
     },
   }
 }
@@ -190,7 +193,6 @@ function spawnEnemies(state: GameState): GameState {
       coord: getSpawnCoord(state.player.coord),
       hp: GAME_CONFIG.enemyHp,
       maxHp: GAME_CONFIG.enemyHp,
-      nextMoveAtMs: state.nowMs + GAME_CONFIG.enemyMoveCooldownMs,
     })
   }
 
@@ -202,21 +204,15 @@ function spawnEnemies(state: GameState): GameState {
   }
 }
 
-function moveEnemies(state: GameState): GameState {
+function moveEnemies(state: GameState, dtMs: number): GameState {
   const cleanupDistance = GAME_CONFIG.enemySpawnMaxDistance + GAME_CONFIG.viewportRadius + 5
+  const distance = GAME_CONFIG.enemySpeedUnitsPerSecond * (dtMs / 1000)
   const enemies = state.enemies
     .filter((enemy) => chebyshevDistance(enemy.coord, state.player.coord) <= cleanupDistance)
-    .map((enemy) => {
-      if (state.nowMs < enemy.nextMoveAtMs) {
-        return enemy
-      }
-
-      return {
-        ...enemy,
-        coord: stepToward(enemy.coord, state.player.coord),
-        nextMoveAtMs: state.nowMs + GAME_CONFIG.enemyMoveCooldownMs,
-      }
-    })
+    .map((enemy) => ({
+      ...enemy,
+      coord: moveToward(enemy.coord, state.player.coord, distance),
+    }))
 
   return {
     ...state,
@@ -229,15 +225,12 @@ function fireWeapon(state: GameState): GameState {
     return state
   }
 
-  const attackCells = getPawnStrikeCells(
-    state.player.coord,
-    state.player.facing,
-    state.weapon.range,
-  )
+  const attackOrigin = snapToCell(state.player.coord)
+  const attackCells = getPawnStrikeCells(attackOrigin, state.player.facing, state.weapon.range)
   const hitKeys = new Set(attackCells.map(coordKey))
   const effects: VisualEffectState[] = [
     ...state.effects,
-    createEffect(state, 'pawn-strike', state.player.coord, GAME_CONFIG.attackEffectMs, {
+    createEffect(state, 'pawn-strike', attackOrigin, GAME_CONFIG.attackEffectMs, {
       cells: attackCells,
     }),
   ]
@@ -249,7 +242,7 @@ function fireWeapon(state: GameState): GameState {
   const enemies: EnemyState[] = []
 
   for (const enemy of state.enemies) {
-    if (!hitKeys.has(coordKey(enemy.coord))) {
+    if (!hitKeys.has(coordKey(snapToCell(enemy.coord)))) {
       enemies.push(enemy)
       continue
     }
@@ -317,7 +310,7 @@ function collectXp(state: GameState): GameState {
   let xp = state.stats.xp
 
   for (const drop of state.xpDrops) {
-    if (chebyshevDistance(drop.coord, state.player.coord) > GAME_CONFIG.pickupRadius) {
+    if (distanceBetween(drop.coord, state.player.coord) > GAME_CONFIG.pickupRadius) {
       remainingDrops.push(drop)
       continue
     }
@@ -346,7 +339,8 @@ function collectXp(state: GameState): GameState {
 
 function applyContactDamage(state: GameState): GameState {
   const isTouchingEnemy = state.enemies.some(
-    (enemy) => enemy.coord.x === state.player.coord.x && enemy.coord.y === state.player.coord.y,
+    (enemy) =>
+      distanceBetween(enemy.coord, state.player.coord) <= GAME_CONFIG.playerContactRadius,
   )
 
   if (!isTouchingEnemy || state.nowMs < state.player.invulnerableUntilMs) {

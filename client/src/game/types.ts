@@ -27,7 +27,6 @@ export type PlayerState = {
   facing: Direction
   hp: number
   maxHp: number
-  nextMoveAtMs: number
   invulnerableUntilMs: number
 }
 
@@ -36,7 +35,6 @@ export type EnemyState = {
   coord: GridCoord
   hp: number
   maxHp: number
-  nextMoveAtMs: number
 }
 
 export type XpDropState = {

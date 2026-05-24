@@ -79,24 +79,25 @@
 }
 
 .game-board {
+  --board-pad: 14px;
   --cell-size: clamp(
     32px,
     min(calc((100vw - 380px) / var(--board-cols)), calc((100svh - 150px) / var(--board-rows))),
     58px
   );
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(var(--board-cols), var(--cell-size));
-  grid-template-rows: repeat(var(--board-rows), var(--cell-size));
-  width: fit-content;
+  width: calc(var(--board-cols) * var(--cell-size) + var(--board-pad) * 2);
+  height: calc(var(--board-rows) * var(--cell-size) + var(--board-pad) * 2);
   max-width: 100%;
   margin: 0 auto;
-  padding: 14px;
   background: #08090b;
+  overflow: hidden;
 }
 
 .board-cell {
-  position: relative;
+  position: absolute;
+  width: var(--cell-size);
+  height: var(--cell-size);
   border: 1px solid rgba(11, 13, 16, 0.45);
 }
 
@@ -118,10 +119,7 @@
 .effect-layer,
 .entity-layer {
   position: absolute;
-  inset: 14px;
-  display: grid;
-  grid-template-columns: repeat(var(--board-cols), var(--cell-size));
-  grid-template-rows: repeat(var(--board-rows), var(--cell-size));
+  inset: 0;
   pointer-events: none;
 }
 
@@ -135,35 +133,35 @@
 
 .board-entity,
 .board-effect {
-  place-self: center;
+  position: absolute;
+  width: var(--cell-size);
+  height: var(--cell-size);
 }
 
 .board-entity {
-  position: relative;
-  width: 84%;
-  height: 84%;
   display: grid;
   place-items: center;
   transition:
-    transform 120ms ease,
+    left 80ms linear,
+    top 80ms linear,
     opacity 120ms ease;
 }
 
 .board-entity img {
-  width: 100%;
-  height: 100%;
+  width: 84%;
+  height: 84%;
   object-fit: contain;
   user-select: none;
   filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.36));
 }
 
 .board-entity--player {
-  width: 96%;
-  height: 96%;
   z-index: 4;
 }
 
 .board-entity--player img {
+  width: 96%;
+  height: 96%;
   filter:
     drop-shadow(0 0 10px rgba(255, 213, 106, 0.62))
     drop-shadow(0 12px 12px rgba(0, 0, 0, 0.4));
@@ -174,9 +172,12 @@
 }
 
 .board-entity--xp {
+  animation: shard-float 900ms ease-in-out infinite alternate;
+}
+
+.board-entity--xp img {
   width: 42%;
   height: 42%;
-  animation: shard-float 900ms ease-in-out infinite alternate;
 }
 
 .enemy-health {
@@ -200,6 +201,12 @@
 }
 
 .board-effect--pawn-strike {
+  display: grid;
+  place-items: center;
+}
+
+.board-effect--pawn-strike::before {
+  content: '';
   width: 82%;
   height: 82%;
   border: 2px solid rgba(255, 213, 106, 0.9);
@@ -210,16 +217,16 @@
 
 .board-effect--hit-flash,
 .board-effect--king-hit {
-  width: 90%;
-  height: 90%;
+  width: calc(var(--cell-size) * 0.9);
+  height: calc(var(--cell-size) * 0.9);
   border-radius: 8px;
   background: rgba(255, 68, 95, 0.36);
   animation: hit-pulse 420ms ease-out both;
 }
 
 .board-effect--death-pop {
-  width: 76%;
-  height: 76%;
+  width: calc(var(--cell-size) * 0.76);
+  height: calc(var(--cell-size) * 0.76);
   border-radius: 999px;
   background: rgba(255, 68, 95, 0.42);
   box-shadow: 0 0 26px rgba(255, 68, 95, 0.42);
@@ -228,6 +235,8 @@
 
 .board-effect--damage-number {
   min-width: 24px;
+  width: fit-content;
+  height: auto;
   padding: 2px 5px;
   border-radius: 6px;
   background: rgba(11, 13, 16, 0.78);
@@ -240,8 +249,8 @@
 }
 
 .board-effect--xp-pickup {
-  width: 46%;
-  height: 46%;
+  width: calc(var(--cell-size) * 0.46);
+  height: calc(var(--cell-size) * 0.46);
   border-radius: 999px;
   background: rgba(99, 199, 255, 0.28);
   box-shadow: 0 0 22px rgba(99, 199, 255, 0.38);
@@ -517,12 +526,7 @@
 @media (max-width: 620px) {
   .game-board {
     --cell-size: calc((100vw - 60px) / var(--board-cols));
-    padding: 8px;
-  }
-
-  .effect-layer,
-  .entity-layer {
-    inset: 8px;
+    --board-pad: 8px;
   }
 
   .start-panel {
