@@ -1,0 +1,31 @@
+export const GAME_CONFIG = {
+  tickMs: 80,
+  viewportRadius: 7,
+  playerMaxHp: 100,
+  playerMoveCooldownMs: 150,
+  playerInvulnerabilityMs: 850,
+  playerContactDamage: 18,
+  pickupRadius: 1.35,
+  enemyMaxCount: 28,
+  enemySpawnIntervalMs: 1400,
+  enemySpawnMinDistance: 9,
+  enemySpawnMaxDistance: 11,
+  enemyMoveCooldownMs: 950,
+  enemyHp: 10,
+  enemyXp: 1,
+  pawnStrikeCooldownMs: 1150,
+  pawnStrikeDamage: 10,
+  pawnStrikeRange: 2,
+  attackEffectMs: 280,
+  hitEffectMs: 420,
+  deathEffectMs: 480,
+  damageNumberMs: 720,
+  xpPickupEffectMs: 520,
+} as const
+
+export const EMPTY_INPUT = {
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+} as const
