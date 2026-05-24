@@ -1,394 +1,400 @@
-# Chess Survivors Meta Progression
+# Meta-progression Chess Survivors
 
-This document defines the run build system for Chess Survivors: weapons, upgrade
-cards, archetypes, starting balance, and the first five minutes of progression.
-It is intentionally small enough for a hackathon build.
+Этот документ описывает систему билдов внутри забега для Chess Survivors:
+оружия, карточки улучшений, архетипы, стартовый баланс и первые пять минут
+прогрессии. Система специально ограничена так, чтобы ее можно было реализовать
+за хакатон.
 
-## Design Stance
+## Дизайн-позиция
 
-- Chess is the pattern language, not a strict simulation.
-- The main progression is per-run: collect XP, choose 1 of 3 cards, shape a build.
-- Permanent meta progression is optional and should not add grind for the MVP.
-- Every card should create an immediate visible spike: new pattern, larger area,
-  faster cadence, survival save, or a clear rare mutation.
-- Active weapon cap: 4 weapons.
-- Weapon max level: 4. Each level is a meaningful breakpoint.
-- First three level-ups are partially scripted so the first run feels good.
-- Newly unlocked or upgraded weapons should fire within 0.2 seconds after the
-  level-up choice so the player instantly sees the payoff.
+- Шахматы здесь являются языком паттернов, а не строгой симуляцией.
+- Основная прогрессия происходит внутри забега: собираешь XP, выбираешь 1 из 3
+  карт, формируешь билд.
+- Постоянная meta progression опциональна и не должна превращать MVP в гринд.
+- Каждая карта должна сразу давать заметный эффект: новый паттерн, большую зону,
+  более частый темп, защитный сейв или редкую мутацию.
+- Лимит активных оружий: 4.
+- Максимальный уровень оружия: 4. Каждый уровень - заметный брейкпоинт.
+- Первые три level-up частично заскриптованы, чтобы первый забег ощущался вкусно.
+- Новое или улучшенное оружие должно сработать в течение 0.2 секунды после выбора
+  карты, чтобы игрок сразу увидел payoff.
 
-## Lightweight Meta Progression
+## Легкая Meta Progression
 
-For MVP, keep permanent progression tiny and localStorage-only:
+Для MVP постоянную прогрессию лучше оставить минимальной и хранить в localStorage:
 
-| Unlock | Rule | Effect |
+| Unlock | Правило | Эффект |
 | --- | --- | --- |
-| Queen's Decree in card pool | Reach player level 4 once, or survive 2:00 once | Allows Queen's Decree to appear as a rare weapon card in future runs |
-| Starter choice | Win once, or survive 4:00 once | Player may start with Pawn Strike or King's Aura |
-| Best run records | Always | Store best time, best level, best kills |
+| Queen's Decree в пуле карт | Достичь уровня 4 один раз или прожить 2:00 один раз | Queen's Decree может появляться как редкая карта оружия в будущих забегах |
+| Выбор стартового оружия | Победить один раз или прожить 4:00 один раз | Игрок может стартовать с Pawn Strike или King's Aura |
+| Рекорды забегов | Всегда | Хранить лучшее время, лучший уровень, максимум убийств |
 
-Do not add permanent damage, HP, or cooldown upgrades for the hackathon MVP.
-The game should be replayable because builds change, not because the player
-grinds numeric account power.
+Не добавлять постоянные апгрейды урона, HP или cooldown для MVP. Игра должна
+переигрываться из-за разных билдов, а не из-за гринда числовой силы аккаунта.
 
-## Weapon Catalog
+## Каталог Оружия
 
-All damage values are config points, not player hearts. Recommended enemy HP:
+Все значения урона - config points, а не сердца игрока. Рекомендуемые HP врагов:
 Corrupted Pawn 10, Mad Knight 18, Rotten Rook 42, Blind Bishop 24.
 
 ### Pawn Strike
 
-Fantasy: disciplined royal infantry strikes in front of the king.
+Fantasy: дисциплинированные удары королевской пехоты перед королем.
 
-Pattern: attacks cells in the king's facing direction. It is the clearest first
-weapon because it teaches facing, movement, cooldowns, kills, and XP.
+Pattern: атакует клетки в направлении взгляда короля. Это самое понятное первое
+оружие: оно учит направлению, движению, cooldown, убийствам и XP.
 
-Base config:
+Базовый config:
 
-| Field | Value |
+| Поле | Значение |
 | --- | --- |
 | Cooldown | 1.15s |
 | Damage | 10 |
-| Range | 2 cells forward |
-| Targets | Every enemy in highlighted cells |
-| Scaling | Damage, range, frontal width, rear safety |
+| Range | 2 клетки вперед |
+| Targets | Все враги на подсвеченных клетках |
+| Scaling | Урон, дальность, ширина фронта, защита сзади |
 
-Levels:
+Уровни:
 
-| Level | Name | Effect |
+| Level | Название | Эффект |
 | --- | --- | --- |
-| 1 | Pawn Strike | Hit 2 cells forward for 10 damage |
-| 2 | Long File | Range becomes 3 cells, damage becomes 14 |
-| 3 | Pawn Fork | Also hits front-left and front-right cells up to 2 cells deep |
-| 4 | Promotion Drill | Cooldown becomes 0.95s and also strikes 2 cells behind the king |
+| 1 | Pawn Strike | Бьет 2 клетки вперед на 10 урона |
+| 2 | Long File | Дальность становится 3 клетки, урон становится 14 |
+| 3 | Pawn Fork | Также бьет переднюю-левую и переднюю-правую клетки на глубину до 2 клеток |
+| 4 | Promotion Drill | Cooldown становится 0.95s и добавляется удар на 2 клетки позади короля |
 
-Visual/readability note: highlight a short gold file in front of the king, then
-flash a compact wedge at level 3. Keep it brief so it does not hide enemies.
+Visual/readability note: подсвечивать короткую золотую линию перед королем,
+затем на level 3 вспыхивает компактный фронтальный клин. Эффект должен быть
+коротким, чтобы не прятать врагов.
 
 ### Knight Pulse
 
-Fantasy: tactical shockwaves at knight-move positions.
+Fantasy: тактические ударные волны по клеткам хода коня.
 
-Pattern: hits the 8 classic knight offsets around the king. This gives instant
-chess identity and protects against enemies approaching from odd angles.
+Pattern: бьет 8 классических knight offsets вокруг короля. Это сразу дает
+шахматную идентичность и защищает от врагов, заходящих под странными углами.
 
-Base config:
+Базовый config:
 
-| Field | Value |
+| Поле | Значение |
 | --- | --- |
 | Cooldown | 2.40s |
 | Damage | 14 |
-| Range | Knight offsets: (1,2), (2,1), and mirrored variants |
-| Targets | Every enemy in highlighted cells |
-| Scaling | Cooldown, double pulse, stun, long L echo |
+| Range | Knight offsets: (1,2), (2,1) и зеркальные варианты |
+| Targets | Все враги на подсвеченных клетках |
+| Scaling | Cooldown, двойной импульс, stun, дальнее L-эхо |
 
-Levels:
+Уровни:
 
-| Level | Name | Effect |
+| Level | Название | Эффект |
 | --- | --- | --- |
-| 1 | Knight Pulse | Hit all 8 knight cells for 14 damage |
-| 2 | Tempo Cut | Cooldown becomes 2.05s, damage becomes 17 |
-| 3 | Double Pulse | Repeats once after 0.25s at 70% damage |
-| 4 | Forked Tempo | Pulse applies 0.35s stun and every second cast also hits long-L offsets (2,3) and (3,2) |
+| 1 | Knight Pulse | Бьет все 8 клеток хода коня на 14 урона |
+| 2 | Tempo Cut | Cooldown становится 2.05s, урон становится 17 |
+| 3 | Double Pulse | Повторяет импульс через 0.25s с 70% урона |
+| 4 | Forked Tempo | Импульс накладывает stun на 0.35s, каждый второй cast также бьет дальние L-offsets (2,3) и (3,2) |
 
-Visual/readability note: show 8 crisp blue-white squares with a small horse-head
-spark at each cell. The delayed second pulse should use a lighter outline.
+Visual/readability note: показать 8 четких сине-белых клеток с маленькой
+искрой в форме головы коня. Отложенный второй импульс должен использовать более
+легкий контур.
 
 ### Bishop Ray
 
-Fantasy: diagonal royal light cutting through corruption.
+Fantasy: диагональный королевский свет, разрезающий corruption.
 
-Pattern: fires diagonal rays from the king in all 4 diagonal directions. This is
-the main line-clearing weapon for enemies coming from corners of the viewport.
+Pattern: выпускает диагональные лучи от короля в 4 диагональных направлениях.
+Это основное оружие для чистки линий, когда враги идут из углов viewport.
 
-Base config:
+Базовый config:
 
-| Field | Value |
+| Поле | Значение |
 | --- | --- |
 | Cooldown | 3.00s |
 | Damage | 13 |
-| Range | 5 cells on each diagonal |
-| Targets | Every enemy on highlighted diagonal cells |
-| Scaling | Range, damage over time, repeat ray |
+| Range | 5 клеток по каждой диагонали |
+| Targets | Все враги на подсвеченных диагональных клетках |
+| Scaling | Дальность, damage over time, повторный луч |
 
-Levels:
+Уровни:
 
-| Level | Name | Effect |
+| Level | Название | Эффект |
 | --- | --- | --- |
-| 1 | Bishop Ray | Hit 4 diagonals, range 5, damage 13 |
-| 2 | Long Diagonal | Range becomes 7, damage becomes 16 |
-| 3 | Sacred Burn | Hit enemies also take 5 damage over 1.5s |
-| 4 | Cathedral Beam | Ray repeats after 0.35s for 80% damage |
+| 1 | Bishop Ray | Бьет 4 диагонали, дальность 5, урон 13 |
+| 2 | Long Diagonal | Дальность становится 7, урон становится 16 |
+| 3 | Sacred Burn | Задетые враги также получают 5 урона за 1.5s |
+| 4 | Cathedral Beam | Луч повторяется через 0.35s с 80% урона |
 
-Visual/readability note: use thin diagonal beams with a fast telegraph line.
-Avoid thick lasers that cover the board parity.
+Visual/readability note: использовать тонкие диагональные лучи с быстрым
+telegraph-line. Не делать толстые лазеры, которые закрывают parity доски.
 
 ### Rook Charge
 
-Fantasy: fortress force projected down ranks and files.
+Fantasy: сила крепости, направленная по вертикалям и горизонталям.
 
-Pattern: attacks straight lines in the 4 cardinal directions. It clears lanes
-and pushes back pressure when the player is being boxed in.
+Pattern: атакует прямые линии в 4 cardinal directions. Очищает lanes и
+отталкивает давление, когда игрока начинают зажимать.
 
-Base config:
+Базовый config:
 
-| Field | Value |
+| Поле | Значение |
 | --- | --- |
 | Cooldown | 3.20s |
 | Damage | 15 |
-| Range | 4 cells up, down, left, right |
-| Targets | Every enemy in highlighted cells |
-| Scaling | Range, damage, width, knockback trail |
+| Range | 4 клетки вверх, вниз, влево, вправо |
+| Targets | Все враги на подсвеченных клетках |
+| Scaling | Дальность, урон, ширина, knockback trail |
 
-Levels:
+Уровни:
 
-| Level | Name | Effect |
+| Level | Название | Эффект |
 | --- | --- | --- |
-| 1 | Rook Charge | Hit 4 cardinal lanes, range 4, damage 15, knockback 1 cell |
-| 2 | Open File | Range becomes 6, damage becomes 18 |
-| 3 | Stone Rank | First 3 cells of each lane become width 3, damage becomes 20 |
-| 4 | Castling Wall | Leaves a 0.8s damaging trail for 8 damage and knockback 1 cell |
+| 1 | Rook Charge | Бьет 4 cardinal lanes, дальность 4, урон 15, knockback 1 клетка |
+| 2 | Open File | Дальность становится 6, урон становится 18 |
+| 3 | Stone Rank | Первые 3 клетки каждого lane становятся шириной 3, урон становится 20 |
+| 4 | Castling Wall | Оставляет damaging trail на 0.8s: 8 урона и knockback 1 клетка |
 
-Visual/readability note: use straight ivory/gold ranks and files. Knockback must
-move enemies along the line direction so the result is easy to read.
+Visual/readability note: использовать прямые ivory/gold линии по ranks и files.
+Knockback должен двигать врагов вдоль направления линии, чтобы результат легко
+читался.
 
 ### Queen's Decree
 
-Fantasy: a rare board-clearing royal command.
+Fantasy: редкий королевский приказ, очищающий доску.
 
-Pattern: combines rook and bishop language by firing in 8 directions. It should
-feel like an ultimate, not a normal filler weapon.
+Pattern: объединяет язык ладьи и слона, стреляя в 8 направлений. Должно
+ощущаться как ultimate, а не как обычное filler-оружие.
 
-Base config:
+Базовый config:
 
-| Field | Value |
+| Поле | Значение |
 | --- | --- |
 | Cooldown | 8.00s |
 | Damage | 26 |
-| Range | 7 cells in 8 directions |
-| Targets | Every enemy in highlighted cells |
-| Scaling | Cooldown, range, repeat decree, execute threshold |
+| Range | 7 клеток в 8 направлениях |
+| Targets | Все враги на подсвеченных клетках |
+| Scaling | Cooldown, дальность, повторный decree, execute threshold |
 
-Levels:
+Уровни:
 
-| Level | Name | Effect |
+| Level | Название | Эффект |
 | --- | --- | --- |
-| 1 | Queen's Decree | Hit 8 directions, range 7, damage 26 |
-| 2 | Royal Command | Cooldown becomes 7.00s, damage becomes 32 |
-| 3 | Absolute File | Range becomes 9 and hit enemies below 25% HP are executed |
-| 4 | Second Decree | Repeats after 0.45s for 60% damage |
+| 1 | Queen's Decree | Бьет 8 направлений, дальность 7, урон 26 |
+| 2 | Royal Command | Cooldown становится 7.00s, урон становится 32 |
+| 3 | Absolute File | Дальность становится 9, враги ниже 25% HP добиваются execute-эффектом |
+| 4 | Second Decree | Повторяется через 0.45s с 60% урона |
 
-Visual/readability note: this can be the biggest effect in the game, but it must
-be short. Use a clear eight-direction starburst and a strong screen-light pulse.
+Visual/readability note: это может быть самый крупный эффект игры, но он должен
+быть коротким. Использовать четкую восьминаправленную вспышку-звезду и сильный
+screen-light pulse.
 
 ### King's Aura
 
-Fantasy: the king's last defensive authority.
+Fantasy: последняя защитная власть короля.
 
-Pattern: periodic ring pulse around the king. It prevents frustrating deaths
-from enemies entering adjacent cells and gives defensive builds an identity.
+Pattern: периодический ring pulse вокруг короля. Предотвращает фрустрирующие
+смерти от врагов в соседних клетках и дает defensive-билдам свою идентичность.
 
-Base config:
+Базовый config:
 
-| Field | Value |
+| Поле | Значение |
 | --- | --- |
 | Cooldown | 0.75s pulse tick |
 | Damage | 5 |
-| Range | Adjacent 8 cells |
-| Targets | Every enemy in ring cells |
-| Scaling | Tick damage, radius, knockback, emergency defense |
+| Range | 8 соседних клеток |
+| Targets | Все враги в клетках кольца |
+| Scaling | Tick damage, радиус, knockback, emergency defense |
 
-Levels:
+Уровни:
 
-| Level | Name | Effect |
+| Level | Название | Эффект |
 | --- | --- | --- |
-| 1 | King's Aura | Pulse adjacent 8 cells for 5 damage every 0.75s |
-| 2 | Royal Guard | Damage becomes 8 |
-| 3 | Wider Court | Adds radius 2 outer ring for 5 damage |
-| 4 | Last Authority | Every fourth pulse knocks enemies back 1 cell; if HP is below 35%, also grants 0.35s invulnerability |
+| 1 | King's Aura | Пульсирует по 8 соседним клеткам на 5 урона каждые 0.75s |
+| 2 | Royal Guard | Урон становится 8 |
+| 3 | Wider Court | Добавляет внешнее кольцо radius 2 на 5 урона |
+| 4 | Last Authority | Каждый четвертый pulse отталкивает врагов на 1 клетку; если HP ниже 35%, также дает 0.35s invulnerability |
 
-Visual/readability note: use a subtle gold ring pulse centered on the king. The
-aura should not look like a permanent filled circle because it would hide melee
-threats.
+Visual/readability note: использовать тонкий золотой ring pulse вокруг короля.
+Aura не должна выглядеть как постоянный залитый круг, иначе она будет прятать
+melee-угрозы.
 
-## Upgrade Catalog
+## Каталог Улучшений
 
 ### Common Weapon Cards
 
-Common weapon cards are either unlock cards or next-level cards for owned
-weapons. They are the backbone of builds.
+Common weapon cards - это либо unlock-карты, либо карты следующего уровня для
+уже взятого оружия. Это основа билдов.
 
-| Card Type | Rule | Example |
+| Тип карты | Правило | Пример |
 | --- | --- | --- |
-| Weapon unlock | Offered only if active weapons are below cap and weapon is unlocked | "Knight Pulse: hit knight-move cells around you" |
-| Weapon level | Offered only for owned weapons below max level | "Bishop Ray II: longer diagonals and more damage" |
-| Starter upgrade | Pawn Strike level 2 or King's Aura level 1 can appear in the first level-up | "Long File: Pawn Strike reaches farther" |
+| Weapon unlock | Предлагается только если активных оружий меньше cap и оружие unlocked | "Knight Pulse: бьет клетки хода коня вокруг тебя" |
+| Weapon level | Предлагается только для owned weapons ниже max level | "Bishop Ray II: более длинные диагонали и больше урона" |
+| Starter upgrade | Pawn Strike level 2 или King's Aura level 1 могут появиться на первом level-up | "Long File: Pawn Strike бьет дальше" |
 
 ### Stat Cards
 
-Stat cards should be strong and limited. Avoid tiny filler cards.
+Stat cards должны быть сильными и ограниченными. Не добавлять мелкие filler-карты.
 
-| Card | Rarity | Effect | Stack Limit |
+| Карта | Rarity | Эффект | Stack Limit |
 | --- | --- | --- | --- |
-| Royal Tempo | Common | All weapon cooldowns -10% | 2 |
-| Sharp Orders | Common | All weapon damage +15% | 2 |
+| Royal Tempo | Common | Cooldown всех оружий -10% | 2 |
+| Sharp Orders | Common | Урон всех оружий +15% | 2 |
 | King's Step | Common | Movement step cooldown -10% | 2 |
-| Royal Magnet | Common | XP pickup radius +0.75 cells | 2 |
-| Castle Skin | Common | Max HP +20 and heal 20 HP | 2 |
-| Oracle Lessons | Common | XP gained +18% | 1 |
-| Emergency Coronation | Common | Heal 35 HP and gain +0.25s post-hit invulnerability | 1 |
+| Royal Magnet | Common | Радиус подбора XP +0.75 клетки | 2 |
+| Castle Skin | Common | Max HP +20 и heal 20 HP | 2 |
+| Oracle Lessons | Common | Получаемый XP +18% | 1 |
+| Emergency Coronation | Common | Heal 35 HP и +0.25s post-hit invulnerability | 1 |
 
 ### Rare Mutation Cards
 
-Rare cards should define a build. They need prerequisites so the offered card
-usually matches the player's current direction.
+Rare cards должны определять билд. Им нужны prerequisites, чтобы предложенная
+карта обычно совпадала с текущим направлением игрока.
 
-| Card | Unlock Rule | Effect |
+| Карта | Unlock Rule | Эффект |
 | --- | --- | --- |
-| Promotion Chain | Pawn Strike level 3+ | Pawn Strike kills reduce its cooldown by 0.15s, max 0.45s per cast cycle |
-| Forked Timeline | Knight Pulse level 2+ | Knight Pulse double pulse deals 100% damage instead of 70% |
-| Diagonal Inferno | Bishop Ray level 3+ | Sacred Burn spreads to one adjacent enemy if the burned enemy dies |
-| Castling Engine | Rook Charge level 2+ and King's Aura owned | Rook Charge trail also triggers one King's Aura pulse |
-| Queen's Favor | Player level 4+ or 3 owned weapons | Unlock Queen's Decree, or upgrade it if already owned |
-| Last Stand | King's Aura owned or player HP below 50% once | While below 40% HP, cooldowns are reduced by 18% |
+| Promotion Chain | Pawn Strike level 3+ | Убийства Pawn Strike снижают его cooldown на 0.15s, максимум 0.45s за cast cycle |
+| Forked Timeline | Knight Pulse level 2+ | Double Pulse у Knight Pulse наносит 100% урона вместо 70% |
+| Diagonal Inferno | Bishop Ray level 3+ | Sacred Burn перекидывается на одного соседнего врага, если burning enemy умирает |
+| Castling Engine | Rook Charge level 2+ и King's Aura owned | Trail от Rook Charge также вызывает один pulse King's Aura |
+| Queen's Favor | Player level 4+ или 3 owned weapons | Unlock Queen's Decree или upgrade Queen's Decree, если оно уже owned |
+| Last Stand | King's Aura owned или HP игрока один раз опустилось ниже 50% | Пока HP ниже 40%, cooldowns снижены на 18% |
 
 ## Unlock Rules
 
-- Pawn Strike, Knight Pulse, Bishop Ray, Rook Charge, and King's Aura are
-  available from the first run.
-- Queen's Decree is rare. It enters the pool after player level 4 in the current
-  run, or after the player has reached level 4 once in any previous run.
-- Do not offer new weapon unlocks after the player has 4 active weapons.
-- Do not offer level cards for locked or maxed weapons.
-- Do not offer rare mutations before the third level-up, except Queen's Favor if
-  the run is already behind on damage after 2:00.
-- If the player has only 1 weapon after two level-ups, force a new weapon offer.
-- If the player has no defensive tool by level 4, increase King's Aura offer
-  weight until it appears.
+- Pawn Strike, Knight Pulse, Bishop Ray, Rook Charge и King's Aura доступны с
+  первого забега.
+- Queen's Decree редкое. Оно входит в пул после player level 4 в текущем забеге
+  или после того, как игрок хотя бы раз достиг level 4 в любом предыдущем забеге.
+- Не предлагать unlock нового оружия, если у игрока уже 4 active weapons.
+- Не предлагать level cards для locked или maxed weapons.
+- Не предлагать rare mutations до третьего level-up, кроме Queen's Favor, если
+  после 2:00 забег явно проседает по урону.
+- Если после двух level-up у игрока только 1 оружие, принудительно предложить
+  новое оружие.
+- Если к level 4 у игрока нет defensive tool, увеличить вес King's Aura до
+  появления в оффере.
 
-## 3-Card Generation Rules
+## Правила Генерации 3 Карт
 
-Card generation should feel guided without feeling scripted.
+Генерация карт должна ощущаться направляемой, но не полностью заскриптованной.
 
-### First Three Level-Ups
+### Первые Три Level-Up
 
-| Player Level Reached | Target Time | Forced Offer Shape |
+| Достигнутый Player Level | Целевое время | Принудительная форма оффера |
 | --- | --- | --- |
 | Level 2 | 20-35s | Knight Pulse unlock, King's Aura unlock, Pawn Strike level 2 |
-| Level 3 | 45-65s | 1 owned weapon upgrade, 1 new weapon, 1 stat card |
-| Level 4 | 75-100s | 1 owned weapon upgrade, 1 build-synergy rare if eligible, 1 new weapon or strong stat |
+| Level 3 | 45-65s | 1 upgrade owned weapon, 1 new weapon, 1 stat card |
+| Level 4 | 75-100s | 1 upgrade owned weapon, 1 eligible build-synergy rare, 1 new weapon или strong stat |
 
-The first level-up should never be three passive stat cards. At least two cards
-must visibly change attack coverage.
+Первый level-up никогда не должен состоять из трех passive stat cards. Минимум
+две карты должны заметно менять attack coverage.
 
-### General Algorithm
+### Общий Алгоритм
 
-Generate three slots, then dedupe by card id:
+Сгенерировать три slots, затем убрать дубли по card id:
 
-| Slot | Purpose | Rule |
+| Slot | Цель | Правило |
 | --- | --- | --- |
-| A | Power | Prefer next level for an owned weapon; fallback to Sharp Orders or Royal Tempo |
-| B | Coverage | Prefer a new weapon if active weapon count is below 3; after that, prefer owned weapon level |
+| A | Power | Предпочитать next level для owned weapon; fallback на Sharp Orders или Royal Tempo |
+| B | Coverage | Предпочитать new weapon, если active weapon count ниже 3; после этого owned weapon level |
 | C | Twist | 55% stat card, 30% eligible rare, 15% weapon card |
 
-Additional rules:
+Дополнительные правила:
 
-- No duplicate cards in the same offer.
-- No more than one rare card in the same offer.
-- No pure-stat-only offers before player level 5.
-- If a player skipped new weapons for two consecutive level-ups and has fewer
-  than 3 weapons, force one new weapon card.
-- If all cards in a slot are invalid, use a safe fallback in this order:
+- Никаких duplicate cards в одном offer.
+- Не больше одной rare card в одном offer.
+- До player level 5 не показывать offer только из stat cards.
+- Если игрок два level-up подряд пропускал new weapons и имеет меньше 3 weapons,
+  принудительно дать одну new weapon card.
+- Если все карты в slot invalid, использовать safe fallback в таком порядке:
   owned weapon level, Royal Tempo, Sharp Orders, Castle Skin.
-- Selecting a weapon unlock or weapon upgrade resets that weapon cooldown to
-  ready so the power spike appears immediately.
+- Выбор weapon unlock или weapon upgrade сбрасывает cooldown этого оружия в
+  ready-состояние, чтобы power spike появился сразу.
 
-## Class And Build Archetypes
+## Классы И Архетипы Билдов
 
-These are not hard classes. They are recognizable build lanes produced by card
-synergy.
+Это не жесткие классы. Это узнаваемые build lanes, которые появляются через
+синергию карт.
 
-| Archetype | Core Weapons | Key Stats/Cards | Playstyle |
+| Архетип | Core Weapons | Key Stats/Cards | Стиль игры |
 | --- | --- | --- | --- |
-| Knight Tempo | Knight Pulse, Pawn Strike, King's Aura | Royal Tempo, King's Step, Forked Timeline | Fast dodging around packs, frequent pulses, safe against flanks |
-| Bishop Laser | Bishop Ray, Queen's Decree, Pawn Strike | Sharp Orders, Diagonal Inferno, Royal Magnet | Kites diagonally, lines enemies up, melts dense waves |
-| Rook Fortress | Rook Charge, King's Aura, Bishop Ray | Castle Skin, Castling Engine, Emergency Coronation | Holds space, clears lanes, survives mistakes |
-| Queen Storm | Queen's Decree, Bishop Ray, Rook Charge | Royal Tempo, Sharp Orders, Queen's Favor | Late-game burst build, huge screen-clearing moments |
-| Pawn Swarm | Pawn Strike, Knight Pulse, Rook Charge | Promotion Chain, Royal Tempo, Oracle Lessons | Aggressive early snowball, many quick small clears |
-| Royal Tank | King's Aura, Rook Charge, Knight Pulse | Castle Skin, Last Stand, Royal Magnet | Close-range survival, walks through pressure and collects XP safely |
+| Knight Tempo | Knight Pulse, Pawn Strike, King's Aura | Royal Tempo, King's Step, Forked Timeline | Быстрое уклонение вокруг pack-ов, частые pulses, защита от флангов |
+| Bishop Laser | Bishop Ray, Queen's Decree, Pawn Strike | Sharp Orders, Diagonal Inferno, Royal Magnet | Kite по диагоналям, выстраивание врагов в линии, плавит плотные волны |
+| Rook Fortress | Rook Charge, King's Aura, Bishop Ray | Castle Skin, Castling Engine, Emergency Coronation | Удерживает пространство, чистит lanes, прощает ошибки |
+| Queen Storm | Queen's Decree, Bishop Ray, Rook Charge | Royal Tempo, Sharp Orders, Queen's Favor | Late-game burst build, большие моменты screen clear |
+| Pawn Swarm | Pawn Strike, Knight Pulse, Rook Charge | Promotion Chain, Royal Tempo, Oracle Lessons | Агрессивный early snowball, много быстрых малых зачисток |
+| Royal Tank | King's Aura, Rook Charge, Knight Pulse | Castle Skin, Last Stand, Royal Magnet | Close-range survival, проходит через давление и безопасно собирает XP |
 
 Build guidance:
 
-- Knight Tempo is the safest "fun first" build because Knight Pulse immediately
-  covers blind spots.
-- Bishop Laser is the clearest high-skill build because positioning changes ray
-  value.
-- Rook Fortress and Royal Tank are beginner-friendly because they correct
-  mistakes and prevent sudden melee deaths.
-- Queen Storm should feel aspirational. It is strongest after level 5, not in
-  the first 30 seconds.
+- Knight Tempo - самый безопасный "fun first" билд, потому что Knight Pulse сразу
+  закрывает blind spots.
+- Bishop Laser - самый понятный high-skill билд, потому что позиционирование
+  напрямую меняет ценность лучей.
+- Rook Fortress и Royal Tank beginner-friendly, потому что исправляют ошибки и
+  предотвращают внезапные melee-смерти.
+- Queen Storm должен ощущаться как aspirational build. Он силен после level 5,
+  а не в первые 30 секунд.
 
-## Starter Build Recommendation
+## Рекомендация Стартового Билда
 
 Default first-run starter:
 
 - Weapon: Pawn Strike level 1.
 - Player HP: 100.
-- Pickup radius: 1.35 cells.
+- Pickup radius: 1.35 клетки.
 - Active weapon cap: 4.
-- First level-up fixed offer: Knight Pulse, King's Aura, Pawn Strike level 2.
+- Первый level-up fixed offer: Knight Pulse, King's Aura, Pawn Strike level 2.
 
-Recommended first pick for demo feel: Knight Pulse. It immediately creates a
-new pattern around the king and shows that chess pieces become weapons.
+Рекомендуемый первый выбор для demo feel: Knight Pulse. Он сразу создает новый
+паттерн вокруг короля и показывает, что шахматные фигуры становятся оружием.
 
-If early deaths are too common, switch default starter to King's Aura level 1
-and make Pawn Strike the first fixed card. Do this only if testers die before
-their first level-up.
+Если early deaths слишком частые, переключить default starter на King's Aura
+level 1 и сделать Pawn Strike первой fixed card. Делать это только если тестеры
+умирают до первого level-up.
 
-## First 5 Minutes Progression Curve
+## Кривая Прогрессии Первых 5 Минут
 
-| Time | Expected State | Enemy Pressure | Player Feeling |
+| Время | Ожидаемое состояние | Enemy Pressure | Ощущение игрока |
 | --- | --- | --- | --- |
-| 0:00-0:20 | Level 1, Pawn Strike | Slow Corrupted Pawns from multiple sides | "I get it. Move, auto-attack, collect XP." |
-| 0:20-0:35 | Level 2 | 5-8 total pawns killed | First card choice, immediate new pattern |
-| 0:35-1:05 | Level 3 | Pawns spawn faster, first small surround | Build direction starts: tempo, aura, or line clear |
-| 1:05-1:40 | Level 4 | Rotten Rook appears, optional Mad Knight warning | First rare/synergy moment or third weapon |
-| 1:40-2:30 | Level 5-6 | Mixed pawns, rooks, knights | Player has 2-3 weapons and can intentionally kite |
-| 2:30-3:15 | Level 6-7 | Higher density, diagonal threats if implemented | Build identity is readable |
-| 3:15-4:00 | Level 7-8 | Fallen Queen warning or corruption surge | Big spike cards matter |
-| 4:00-5:00 | Level 8-10 | Boss or final survival wave | Run reaches win/lose payoff |
+| 0:00-0:20 | Level 1, Pawn Strike | Медленные Corrupted Pawns с нескольких сторон | "Я понял: двигаться, автоатака, собирать XP." |
+| 0:20-0:35 | Level 2 | 5-8 убитых pawns всего | Первый выбор карты, сразу новый паттерн |
+| 0:35-1:05 | Level 3 | Pawns спавнятся быстрее, первый малый surround | Начинается направление билда: tempo, aura или line clear |
+| 1:05-1:40 | Level 4 | Появляется Rotten Rook, optional Mad Knight warning | Первый rare/synergy moment или третье оружие |
+| 1:40-2:30 | Level 5-6 | Mixed pawns, rooks, knights | У игрока 2-3 оружия, появляется intentional kite |
+| 2:30-3:15 | Level 6-7 | Более высокая density, diagonal threats если реализованы | Идентичность билда читается |
+| 3:15-4:00 | Level 7-8 | Fallen Queen warning или corruption surge | Big spike cards начинают решать |
+| 4:00-5:00 | Level 8-10 | Boss или final survival wave | Забег приходит к win/lose payoff |
 
-## Balance Table
+## Таблица Баланса
 
 ### Player And World
 
 | Config Key | Value |
 | --- | --- |
 | visibleViewportSize | 15x15 |
-| spawnRingChebyshevMin | 9 cells from king |
-| spawnRingChebyshevMax | 11 cells from king |
+| spawnRingChebyshevMin | 9 клеток от короля |
+| spawnRingChebyshevMax | 11 клеток от короля |
 | activeWeaponCap | 4 |
 | playerMaxHp | 100 |
 | playerStartHp | 100 |
 | playerMoveStepCooldown | 0.16s |
 | postHitInvulnerability | 0.85s |
-| pickupRadius | 1.35 cells |
+| pickupRadius | 1.35 клетки |
 
 ### XP Curve
 
-Use XP required from the current level to the next level:
+Использовать XP, требуемый от текущего уровня до следующего:
 
 | Current Level | XP To Next | Expected Timing |
 | --- | --- | --- |
-| 1 | 6 | Level 2 at 20-35s |
-| 2 | 8 | Level 3 at 45-65s |
-| 3 | 11 | Level 4 at 75-100s |
-| 4 | 15 | Level 5 around 2:00 |
-| 5 | 18 | Level 6 around 2:30 |
-| 6 | 22 | Level 7 around 3:10 |
-| 7 | 26 | Level 8 around 3:50 |
-| 8 | 30 | Level 9 around 4:30 |
-| 9 | 34 | Level 10 around 5:00 |
+| 1 | 6 | Level 2 за 20-35s |
+| 2 | 8 | Level 3 за 45-65s |
+| 3 | 11 | Level 4 за 75-100s |
+| 4 | 15 | Level 5 около 2:00 |
+| 5 | 18 | Level 6 около 2:30 |
+| 6 | 22 | Level 7 около 3:10 |
+| 7 | 26 | Level 8 около 3:50 |
+| 8 | 30 | Level 9 около 4:30 |
+| 9 | 34 | Level 10 около 5:00 |
 
 ### Enemy Starter Values
 
@@ -402,61 +408,61 @@ Use XP required from the current level to the next level:
 
 ### Spawn Curve
 
-| Time | Spawn Rule |
+| Время | Spawn Rule |
 | --- | --- |
-| 0:00-0:30 | 1 pawn every 1.45s |
-| 0:30-1:00 | 1-2 pawns every 1.25s |
-| 1:00-1:30 | 2 pawns every 1.15s, 1 rook every 9s |
-| 1:30-2:15 | 2-3 pawns every 1.05s, 1 knight every 8s, 1 rook every 10s |
-| 2:15-3:15 | 3 pawns every 0.95s, mixed elite every 6-8s |
-| 3:15-5:00 | Boss or final wave; reduce normal spawns by 25% while boss is active |
+| 0:00-0:30 | 1 pawn каждые 1.45s |
+| 0:30-1:00 | 1-2 pawns каждые 1.25s |
+| 1:00-1:30 | 2 pawns каждые 1.15s, 1 rook каждые 9s |
+| 1:30-2:15 | 2-3 pawns каждые 1.05s, 1 knight каждые 8s, 1 rook каждые 10s |
+| 2:15-3:15 | 3 pawns каждые 0.95s, mixed elite каждые 6-8s |
+| 3:15-5:00 | Boss или final wave; снизить normal spawns на 25%, пока boss active |
 
 ### Weapon Base Values
 
 | Weapon | Cooldown | Damage | Range | Role |
 | --- | --- | --- | --- | --- |
-| Pawn Strike | 1.15s | 10 | 2 forward | Starter DPS |
+| Pawn Strike | 1.15s | 10 | 2 вперед | Starter DPS |
 | Knight Pulse | 2.40s | 14 | 8 knight offsets | Surround coverage |
 | Bishop Ray | 3.00s | 13 | 5 diagonal | Line clear |
-| Rook Charge | 3.20s | 15 | 4 cardinal | Lane clear and knockback |
-| Queen's Decree | 8.00s | 26 | 7 in 8 directions | Rare burst |
+| Rook Charge | 3.20s | 15 | 4 cardinal | Lane clear и knockback |
+| Queen's Decree | 8.00s | 26 | 7 в 8 направлениях | Rare burst |
 | King's Aura | 0.75s | 5 | Radius 1 ring | Defensive close range |
 
 ### Rarity Weights After Level 4
 
 | Rarity | Weight | Notes |
 | --- | --- | --- |
-| Common weapon level | 45 | Highest priority if owned weapons are not maxed |
-| Common stat | 25 | Strong, stack-limited |
-| New weapon | 20 | Only while below active weapon cap |
-| Rare mutation | 10 | Only if prerequisite is met |
+| Common weapon level | 45 | Highest priority, если owned weapons не maxed |
+| Common stat | 25 | Сильные, stack-limited |
+| New weapon | 20 | Только пока active weapon count ниже cap |
+| Rare mutation | 10 | Только если prerequisite выполнен |
 
-## Immediate Fun Rules For First 30 Seconds
+## Правила Моментального Фана В Первые 30 Секунд
 
-- Spawn the first pawn wave within 1 second of pressing Start Run.
-- First XP shards should be collectible without backtracking far.
-- Pawn Strike should one-shot Corrupted Pawns at level 1.
-- First level-up must happen from 6 XP, not a larger threshold.
-- First level-up offer must include at least two attack-pattern cards.
-- After picking Knight Pulse or King's Aura, fire it almost immediately.
-- Avoid showing Queen's Decree in the first offer; it is stronger as an
-  aspirational rare later.
+- Первую волну pawns спавнить в течение 1 секунды после Start Run.
+- Первые XP shards должны собираться без дальнего backtracking.
+- Pawn Strike должен one-shot Corrupted Pawns на level 1.
+- Первый level-up должен требовать 6 XP, не больше.
+- Первый level-up offer должен включать минимум две attack-pattern cards.
+- После выбора Knight Pulse или King's Aura оружие должно сработать почти сразу.
+- Не показывать Queen's Decree в первом offer; оно лучше работает как
+  aspirational rare позже.
 
 ## Cuts If Time Runs Short
 
-Cut in this order:
+Резать в таком порядке:
 
-1. Permanent meta progression. Keep only best run records.
-2. Rare mutations except Queen's Favor, Royal Tempo, Castle Skin, Royal Magnet.
-3. Queen's Decree levels 2-4. Keep it as a single rare ultimate card.
-4. Weapon level 4 effects. Ship each weapon with 3 levels.
-5. Blind Bishop enemy and diagonal burn spread.
-6. Dynamic weighted generation. Hardcode the first three level-up offers, then
-   use simple random eligible cards.
+1. Постоянная meta progression. Оставить только best run records.
+2. Rare mutations кроме Queen's Favor, Royal Tempo, Castle Skin, Royal Magnet.
+3. Queen's Decree levels 2-4. Оставить его как одну rare ultimate card.
+4. Level 4 effects для оружий. Зарелизить каждое оружие с 3 уровнями.
+5. Blind Bishop enemy и diagonal burn spread.
+6. Dynamic weighted generation. Захардкодить первые три level-up offers, затем
+   использовать простой random eligible cards.
 
-Do not cut:
+Не резать:
 
-- First level-up timing.
-- 3-card choice.
-- At least 4 weapons: Pawn Strike, Knight Pulse, Bishop Ray, Rook Charge.
-- Immediate cooldown reset after choosing a weapon card.
+- Timing первого level-up.
+- Выбор 1 из 3 карт.
+- Минимум 4 оружия: Pawn Strike, Knight Pulse, Bishop Ray, Rook Charge.
+- Мгновенный cooldown reset после выбора weapon card.
